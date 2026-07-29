@@ -183,12 +183,12 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      padding: 0 30px 0 6px;
+      padding: 6px 30px 0 6px;
     }
     .timeline-track::before {
       content: "";
       position: absolute;
-      top: 20px;
+      top: 26px;
       left: 40px;
       right: 22px;
       height: 3px;
@@ -280,7 +280,7 @@
     /* Arrow at end of timeline line */
     .tl-arrow {
       position: absolute;
-      top: 14px; /* center on the 3px line at top:20px → 20 - 6 = 14 */
+      top: 20px;
       right: 10px;
       width: 0; height: 0;
       border-top: 7px solid transparent;
@@ -3730,12 +3730,11 @@ function Timeline({ sheetVideos, onPlayVideo }) {
               <div className="tarifa-modal-title">{viewImage.titulo}</div>
               <button className="tarifa-close-btn" onClick={() => setViewImage(null)} aria-label="Cerrar">×</button>
             </div>
-            <div className="tarifa-img-wrap" style={{ overflow: "auto", maxHeight: "80vh", cursor: imgZoom > 1 ? "grab" : "zoom-in" }}
-              onWheel={(e) => { e.stopPropagation(); setImgZoom(z => Math.min(4, Math.max(1, z + (e.deltaY < 0 ? 0.3 : -0.3)))); }}>
+            <div className="tarifa-img-wrap" style={{ overflow: "auto", maxHeight: "80vh", cursor: imgZoom > 1 ? "zoom-out" : "zoom-in" }}>
               <img
                 src={driveToDirectImageUrl(viewImage.link) || viewImage.link}
                 alt={viewImage.titulo}
-                style={{ width: "100%", transform: `scale(${imgZoom})`, transformOrigin: "top center", display: "block", background: "#fff", transition: "transform 0.15s ease" }}
+                style={{ width: imgZoom > 1 ? "200%" : "100%", display: "block", background: "#fff", transition: "width 0.2s ease" }}
                 onClick={() => setImgZoom(z => z > 1 ? 1 : 2)}
               />
             </div>
