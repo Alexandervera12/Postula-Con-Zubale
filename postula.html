@@ -1414,7 +1414,7 @@
         border-bottom-color: var(--blue);
       }
 
-      .mobile-tabs { display: none !important; }
+      .mobile-tabs { display: flex !important; }
       .modal-body {
         display: block;
         position: relative;
@@ -1423,7 +1423,17 @@
         height: auto;
       }
       .cities-col { display: none; }
-      .map-col { display: none !important; }
+      .map-col {
+        display: none !important;
+        min-height: 50vh;
+        border: none;
+      }
+      .modal-body.mobile-show-mapa .map-col {
+        display: block !important;
+      }
+      .modal-body.mobile-show-mapa .stores-col {
+        display: none !important;
+      }
       .stores-col {
         position: static;
         width: 100%;
@@ -3099,6 +3109,7 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
   const [selectedStoreIdx, setSelectedStoreIdx] = useState(null);
   const [storeOnMap, setStoreOnMap] = useState(null); // {store, regionName}
   const [locating, setLocating] = useState(false);
+  const [mobileView, setMobileView] = useState("lista"); // "lista" | "mapa"
 
   /* ─── NUEVO: datos desde Google Sheets ─── */
   const [sheetRegiones, setSheetRegiones] = useState(null); // null = loading
@@ -3165,10 +3176,10 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
 
   useEffect(() => { setRegionIdx(0); setOpenStore(null); setSelectedStoreIdx(null); }, [query, retailFilter]);
 
-  /* ─── Inicializar el mapa Leaflet al montar (solo si el contenedor está visible y datos cargados) ─── */
+  /* ─── Inicializar el mapa Leaflet (solo si el contenedor está visible y datos cargados) ─── */
   useEffect(() => {
     if (!mapElRef.current || mapRef.current || !window.L || !sheetRegiones) return;
-    // En mobile, .map-col tiene display: none — saltamos init para no inicializar con 0x0
+    // Esperar a que el contenedor sea visible (display:none → width=0)
     const rect = mapElRef.current.getBoundingClientRect();
     if (rect.width < 20 || rect.height < 20) return;
     const L = window.L;
@@ -3228,7 +3239,14 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
       if (roRef.current) { roRef.current.disconnect(); roRef.current = null; }
       if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
     };
-  }, [sheetRegiones]);
+  }, [sheetRegiones, mobileView]);
+
+  // Invalidate map size when switching to mapa view on mobile
+  useEffect(() => {
+    if (mobileView === "mapa" && mapRef.current) {
+      setTimeout(() => mapRef.current.invalidateSize(), 100);
+    }
+  }, [mobileView]);
 
   /* ─── Actualizar marcadores cuando cambia la ciudad ─── */
   useEffect(() => {
@@ -3446,7 +3464,17 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
             </div>
           )}
 
-          <div className="modal-body" style={{ display: sheetRegiones === null ? "none" : undefined }}>
+          <div className="mobile-tabs">
+            <button className={"mobile-tab" + (mobileView === "lista" ? " active" : "")} onClick={() => setMobileView("lista")}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              Lista
+            </button>
+            <button className={"mobile-tab" + (mobileView === "mapa" ? " active" : "")} onClick={() => setMobileView("mapa")}>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              Mapa
+            </button>
+          </div>
+          <div className={"modal-body" + (mobileView === "mapa" ? " mobile-show-mapa" : "")} style={{ display: sheetRegiones === null ? "none" : undefined }}>
             <div className="cities-col">
               <div className="cities-title">Regiones</div>
               {filteredRegions.length === 0 ? (
