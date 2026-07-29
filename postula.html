@@ -1,0 +1,4000 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zubale – Postula y empieza a ganar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #1557D6;
+      --blue2:       #1B4FFF;
+      --blue-light:  #DBEAFE;
+      --blue-dark:   #0A1A6B;
+      --blue-deeper: #0B3BAA;
+      --gray:        #F3F6FA;
+      --gray2:       #E5E7EB;
+      --text:        #1A2340;
+      --muted:       #6B7A9A;
+      --white:       #FFFFFF;
+      --success:     #10B981;
+      --green-soft:  #D1FAE5;
+      --warn-bg:     #FEF9C3;
+      --warn-border: #FDE047;
+      --warn-text:   #854D0E;
+    }
+
+    input, button, select, textarea { font-family: 'Lexend', 'Segoe UI', system-ui, sans-serif; }
+    html, body {
+      height: 100%;
+      font-family: 'Lexend', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--gray);
+      color: var(--text);
+      scroll-behavior: smooth;
+    }
+    #root { min-height: 100vh; }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--white);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      box-shadow: 0 1px 0 var(--gray2);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-logo { display: flex; align-items: center; }
+    .header-cta {
+      background: var(--blue-light);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 99px;
+      border: 1px solid #BFDBFE;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .header-cta:hover { background: var(--blue); color: var(--white); }
+
+    /* ── HERO (role selector) ── */
+    .hero {
+      background: linear-gradient(135deg, #1557D6 0%, #1B4FFF 60%, #2A68FF 100%);
+      color: var(--white);
+      padding: 56px 24px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+      top: -200px; left: -200px;
+      pointer-events: none;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      bottom: -200px; right: -200px;
+      pointer-events: none;
+    }
+    .hero-inner { position: relative; z-index: 2; max-width: 900px; margin: 0 auto; }
+    .hero h1 {
+      font-size: clamp(26px, 5vw, 42px);
+      font-weight: 900;
+      margin-bottom: 10px;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+    }
+    .hero p {
+      font-size: clamp(14px, 2vw, 17px);
+      opacity: 0.9;
+      max-width: 580px;
+      margin: 0 auto 32px;
+      line-height: 1.55;
+    }
+
+    /* ── ROLE PILLS ── */
+    .role-pills {
+      display: inline-flex;
+      gap: 10px;
+      padding: 8px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 99px;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    @media (max-width: 560px) {
+      .role-pills { flex-wrap: wrap; justify-content: center; border-radius: 24px; }
+    }
+    .role-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 32px;
+      border-radius: 99px;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--white);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.28s cubic-bezier(.4,0,.2,1);
+      letter-spacing: 0.3px;
+      min-width: 120px;
+    }
+    .role-pill:hover { background: rgba(255,255,255,0.14); }
+    .role-pill.active {
+      background: var(--white);
+      color: var(--blue);
+      box-shadow: 0 6px 22px rgba(0,0,0,0.18);
+      transform: scale(1.02);
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      max-width: 1180px;
+      margin: -40px auto 0;
+      padding: 0 20px 60px;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* SPLIT CONTENT */
+    .split-wrap {
+      display: grid;
+      grid-template-columns: 1.55fr minmax(320px, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .split-wrap { grid-template-columns: 1fr; }
+    }
+
+    /* ── LEFT: "Dónde puedes ser X" ── */
+    .locations-card {
+      background: linear-gradient(160deg, #0B3BAA 0%, #1557D6 55%, #1B4FFF 100%);
+      color: var(--white);
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 20px 50px rgba(21,87,214,0.25);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 420px;
+      cursor: pointer;
+      transition: transform 0.28s cubic-bezier(.4,0,.2,1), box-shadow 0.28s;
+    }
+    .locations-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 60px rgba(21,87,214,0.35);
+    }
+    .locations-card::before {
+      content: "";
+      position: absolute;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(255,255,255,0.14) 0%, transparent 70%);
+      top: -100px; right: -100px;
+      pointer-events: none;
+    }
+    .locations-card::after {
+      content: "";
+      position: absolute;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      bottom: -60px; left: -60px;
+      pointer-events: none;
+    }
+    .loc-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 2;
+      width: fit-content;
+    }
+    .loc-title {
+      font-size: clamp(24px, 3vw, 32px);
+      font-weight: 900;
+      line-height: 1.15;
+      margin: 18px 0 10px;
+      position: relative;
+      z-index: 2;
+    }
+    .loc-sub {
+      font-size: 14px;
+      opacity: 0.85;
+      line-height: 1.6;
+      margin-bottom: 26px;
+      position: relative;
+      z-index: 2;
+      max-width: 320px;
+    }
+    .loc-mini-list {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 26px;
+    }
+    .loc-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+    .loc-mini-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #8FD7FF;
+      box-shadow: 0 0 0 3px rgba(143,215,255,0.25);
+    }
+    .loc-cta {
+      position: relative;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--white);
+      color: var(--blue);
+      padding: 16px 22px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      width: 100%;
+    }
+    .loc-cta:hover { transform: scale(1.02); }
+    .loc-cta-icon {
+      display: inline-flex;
+      width: 26px; height: 26px;
+      background: var(--blue-light);
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ── RIGHT: Info grid ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .info-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 26px 28px;
+      box-shadow: 0 6px 22px rgba(21,87,214,0.08);
+      border: 1.5px solid transparent;
+      transition: all 0.28s cubic-bezier(.4,0,.2,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .info-card:hover {
+      border-color: var(--blue-light);
+      box-shadow: 0 14px 36px rgba(21,87,214,0.15);
+      transform: translateY(-2px);
+    }
+    .info-card-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .info-card-icon {
+      width: 46px; height: 46px;
+      border-radius: 13px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .info-card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+    }
+    .info-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .info-card ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .info-card li {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.5;
+    }
+    .info-card li::before {
+      content: "✓";
+      flex-shrink: 0;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--green-soft);
+      color: var(--success);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      margin-top: 1px;
+    }
+
+    /* Earnings specific */
+    .earn-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--gray);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .earn-row:hover { background: var(--blue-light); }
+    .earn-label { font-size: 13px; font-weight: 600; color: var(--muted); }
+    .earn-value { font-size: 17px; font-weight: 900; color: var(--blue); }
+    .earn-note {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 12px;
+      font-style: italic;
+      opacity: 0.75;
+    }
+
+    /* ── GUÍAS CARD (en info-grid, estilo blanco como .info-card) ── */
+    .guias-card {
+      position: relative;
+      background: var(--white);
+      color: var(--text);
+      border-radius: 20px;
+      padding: 26px 28px;
+      box-shadow: 0 6px 22px rgba(21,87,214,0.08);
+      border: 1.5px solid transparent;
+      transition: all 0.28s cubic-bezier(.4,0,.2,1);
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .guias-card:hover {
+      border-color: var(--blue-light);
+      box-shadow: 0 14px 36px rgba(21,87,214,0.15);
+      transform: translateY(-2px);
+    }
+    .guias-card-bg { display: none; }
+    .guias-card-content { position: relative; z-index: 2; }
+    .guias-card-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .guias-card-icon {
+      width: 46px; height: 46px;
+      border-radius: 13px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .guias-card-tag {
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--blue);
+      margin-bottom: 3px;
+    }
+    .guias-card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+    }
+    .guias-card-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .guias-card-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--blue-light);
+      color: var(--blue);
+      border: none;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .guias-card-btn:hover {
+      background: var(--blue);
+      color: var(--white);
+      transform: translateX(2px);
+      box-shadow: 0 6px 16px rgba(21,87,214,0.22);
+    }
+
+    /* ── GUÍAS MODAL ── */
+    .guias-overlay { z-index: 240; }
+    .guias-modal {
+      background: var(--white);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 860px;
+      max-height: 94vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 28px 70px rgba(0,0,0,0.35);
+      animation: slideUp 0.32s cubic-bezier(.4,0,.2,1);
+    }
+    .guias-head {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: var(--white);
+      padding: 22px 28px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .guias-head-text { flex: 1; min-width: 0; }
+    .guias-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: rgba(255,255,255,0.22);
+      padding: 4px 11px;
+      border-radius: 99px;
+      margin-bottom: 8px;
+    }
+    .guias-title {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .guias-sub {
+      font-size: 13px;
+      opacity: 0.88;
+      line-height: 1.45;
+    }
+    .guias-stage {
+      position: relative;
+      background: #0B3BAA;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 58px;
+      min-height: 300px;
+    }
+    .guias-slide-wrap {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .guias-slide {
+      width: 100%;
+      height: auto;
+      max-height: 62vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 18px 44px rgba(0,0,0,0.4);
+      display: block;
+    }
+    .guias-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.95);
+      color: var(--blue);
+      font-size: 28px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      z-index: 3;
+    }
+    .guias-nav.prev { left: 14px; }
+    .guias-nav.next { right: 14px; }
+    .guias-nav:hover:not(.disabled) {
+      background: var(--white);
+      transform: translateY(-50%) scale(1.08);
+    }
+    .guias-nav.disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .guias-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px 20px;
+      background: var(--white);
+      border-top: 1px solid var(--gray2);
+      gap: 14px;
+    }
+    .guias-dots {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+      justify-content: center;
+    }
+    .guias-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--gray2);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.2s;
+    }
+    .guias-dot:hover { background: var(--blue-light); }
+    .guias-dot.active {
+      background: var(--blue);
+      width: 26px;
+      border-radius: 99px;
+    }
+    .guias-counter {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      background: var(--gray);
+      padding: 6px 12px;
+      border-radius: 99px;
+      flex-shrink: 0;
+    }
+    .guias-empty {
+      padding: 60px 30px;
+      text-align: center;
+      background: var(--gray);
+    }
+    .guias-empty-icon { font-size: 46px; margin-bottom: 12px; }
+    .guias-empty-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .guias-empty-text {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 360px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+    /* Mobile-only nav wrapper (hidden by default) */
+    .guias-mobile-nav { display: none; }
+    @media (max-width: 780px) {
+      .guias-overlay { padding: 10px; align-items: flex-start; overflow-y: auto; }
+      .guias-modal {
+        border-radius: 18px;
+        max-height: none;
+        height: auto;
+        width: 100%;
+        margin: 10px 0;
+      }
+      .guias-head { padding: 18px 20px 16px; gap: 12px; }
+      .guias-title { font-size: 17px; }
+      .guias-sub { font-size: 12px; }
+      .guias-stage {
+        padding: 14px 12px 18px;
+        min-height: auto;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .guias-slide-wrap {
+        width: 100%;
+        max-width: 100%;
+      }
+      .guias-slide {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+        border-radius: 10px;
+        display: block;
+      }
+      /* Hide desktop absolute-positioned nav buttons on mobile */
+      .guias-stage > .guias-nav { display: none; }
+      /* Show mobile row of nav buttons below slide */
+      .guias-mobile-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        width: 100%;
+      }
+      .guias-mobile-nav .guias-nav {
+        position: static;
+        transform: none;
+        width: 44px;
+        height: 44px;
+        font-size: 26px;
+      }
+      .guias-mobile-nav .guias-nav:hover:not(.disabled) {
+        transform: scale(1.06);
+      }
+      .guias-footer { padding: 12px 16px 16px; }
+      .guias-dot { width: 8px; height: 8px; }
+      .guias-dot.active { width: 22px; }
+      .guias-counter { font-size: 11px; padding: 5px 10px; }
+    }
+
+    /* ── GEO SPINNER ── */
+    .geo-spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2.2px solid rgba(4,120,87,0.25);
+      border-top-color: #047857;
+      border-radius: 50%;
+      animation: geoSpin 0.9s linear infinite;
+    }
+    @keyframes geoSpin { to { transform: rotate(360deg); } }
+
+    /* ── STORE MAP MODAL (mini-mapa por local) ── */
+    .store-map-overlay { z-index: 260; }
+    .tarifa-overlay    { z-index: 320; }
+    .store-map-modal {
+      background: var(--white);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 92vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 28px 70px rgba(0,0,0,0.35);
+      animation: slideUp 0.32s cubic-bezier(.4,0,.2,1);
+    }
+    .store-map-head {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: var(--white);
+      padding: 22px 24px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .store-map-head-text { flex: 1; min-width: 0; }
+    .store-map-city-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      background: rgba(255,255,255,0.22);
+      padding: 4px 10px;
+      border-radius: 99px;
+      margin-bottom: 8px;
+    }
+    .store-map-title {
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 4px;
+      overflow-wrap: break-word;
+    }
+    .store-map-addr {
+      font-size: 13px;
+      opacity: 0.88;
+      font-weight: 500;
+      line-height: 1.45;
+      overflow-wrap: break-word;
+    }
+    .store-map-container {
+      width: 100%;
+      height: 380px;
+      min-height: 260px;
+      background: #e5ecf5;
+      flex: 1;
+      position: relative;
+    }
+    .store-map-container .leaflet-container {
+      width: 100%;
+      height: 100%;
+      font-family: 'Lexend', sans-serif;
+      background: #e5ecf5;
+    }
+    .store-map-footer {
+      padding: 16px 22px 20px;
+      background: var(--white);
+      border-top: 1px solid var(--gray2);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .store-map-inscribir {
+      width: 100%;
+      justify-content: center;
+    }
+    .store-map-tarifa {
+      width: 100%;
+      justify-content: center;
+      flex: none;
+    }
+    @media (max-width: 780px) {
+      .store-map-modal {
+        max-width: 100%;
+        border-radius: 18px;
+        max-height: 94vh;
+      }
+      .store-map-head { padding: 18px 20px 16px; }
+      .store-map-title { font-size: 17px; }
+      .store-map-addr { font-size: 12px; }
+      .store-map-container { height: 56vh; min-height: 260px; }
+      .store-map-footer { padding: 14px 18px 16px; }
+    }
+
+    /* ── FAQs ── */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .faqs-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 28px 28px 20px;
+      box-shadow: 0 6px 22px rgba(21,87,214,0.08);
+      border: 1.5px solid var(--gray2);
+    }
+    .faqs-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .faqs-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .faqs-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .faqs-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+    .faq-item {
+      border-top: 1px solid var(--gray2);
+      padding: 14px 0;
+      cursor: pointer;
+    }
+    .faq-item:last-child { padding-bottom: 4px; }
+    .faq-q {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+      transition: color 0.2s;
+    }
+    .faq-item:hover .faq-q { color: var(--blue); }
+    .faq-chev {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1), background 0.2s;
+    }
+    .faq-item.open .faq-chev {
+      transform: rotate(45deg);
+      background: var(--blue);
+      color: var(--white);
+    }
+    .faq-a-wrap {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .faq-item.open .faq-a-wrap { max-height: 260px; }
+    .faq-a {
+      padding-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── APP DOWNLOAD BANNER (compacto, al final) ── */
+    .app-banner {
+      margin: 28px auto 0;
+      max-width: 720px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(21,87,214,0.15);
+      position: relative;
+    }
+    .app-banner-img-link {
+      display: block;
+      line-height: 0;
+    }
+    .app-banner-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .app-banner-stores {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      align-items: center;
+      padding: 16px 18px 18px;
+      flex-wrap: wrap;
+      background: var(--white);
+      border-top: 1px solid var(--gray2);
+    }
+    .app-banner-store-link {
+      display: inline-block;
+      line-height: 0;
+      transition: transform 0.2s;
+      border-radius: 10px;
+    }
+    .app-banner-store-link:hover {
+      transform: translateY(-2px);
+    }
+    .app-banner-store-img {
+      height: 46px;
+      width: auto;
+      display: block;
+    }
+    @media (max-width: 780px) {
+      .app-banner {
+        margin-top: 22px;
+        max-width: 100%;
+        border-radius: 14px;
+      }
+      .app-banner-stores {
+        padding: 14px 12px 16px;
+        gap: 10px;
+      }
+      .app-banner-store-img {
+        height: 40px;
+      }
+    }
+
+    /* ── FINAL CTA ── */
+    .final-cta-wrap {
+      margin-top: 46px;
+      background: var(--white);
+      border-radius: 24px;
+      padding: 42px 32px;
+      text-align: center;
+      box-shadow: 0 6px 24px rgba(21,87,214,0.10);
+      position: relative;
+      overflow: hidden;
+      border: 1.5px solid var(--blue-light);
+    }
+    .final-cta-wrap h3 {
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .final-cta-wrap p {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 24px;
+      line-height: 1.55;
+    }
+    .final-cta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+    }
+    @media (max-width: 560px) {
+      .final-cta-buttons { flex-direction: column; align-items: stretch; }
+      .final-cta-buttons .btn-primary { width: 100%; }
+    }
+    .btn-primary {
+      padding: 16px 32px;
+      border-radius: 14px;
+      border: none;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 22px rgba(21,87,214,0.35);
+      font-family: inherit;
+      letter-spacing: 0.3px;
+    }
+    .btn-primary:hover { background: var(--blue2); transform: translateY(-1px); box-shadow: 0 10px 30px rgba(21,87,214,0.45); }
+    .btn-primary:active { transform: scale(0.98); }
+
+    /* ── MODAL OVERLAY ── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(10,26,107,0.55);
+      backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal-locations {
+      background: var(--white);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 1360px;
+      max-height: 94vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 28px 70px rgba(0,0,0,0.3);
+      animation: slideUp 0.32s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-head {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: var(--white);
+      padding: 26px 28px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .modal-head h2 {
+      font-size: 21px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .modal-head p { font-size: 13px; opacity: 0.85; }
+    .modal-close {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      border: none;
+      color: var(--white);
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
+
+    .modal-search-row {
+      padding: 20px 28px 8px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      background: var(--white);
+    }
+    @media (max-width: 640px) {
+      .modal-search-row { grid-template-columns: 1fr; }
+    }
+    .search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--gray2);
+      border-radius: 14px;
+      background: var(--white);
+      transition: all 0.2s;
+      padding-left: 14px;
+    }
+    .search-wrap:focus-within {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(21,87,214,0.12);
+    }
+    .search-wrap svg { flex-shrink: 0; color: var(--muted); }
+    .search-wrap input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 14px 14px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      background: transparent;
+    }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .btn-geo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 18px;
+      border-radius: 12px;
+      border: 2px solid var(--success);
+      background: var(--green-soft);
+      color: #047857;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-geo:hover { background: var(--success); color: var(--white); transform: translateY(-1px); }
+
+    .modal-body {
+      display: grid;
+      grid-template-columns: 210px 400px 1fr;
+      gap: 0;
+      overflow: hidden;
+      flex: 1;
+      min-height: 560px;
+    }
+    @media (max-width: 1200px) {
+      .modal-body { grid-template-columns: 200px 360px 1fr; min-height: 520px; }
+    }
+    @media (max-width: 980px) {
+      .modal-body { grid-template-columns: 190px 320px 1fr; min-height: 480px; }
+    }
+    @media (max-width: 880px) {
+      .modal-body { grid-template-columns: 1fr 1.2fr; }
+      .map-col { grid-column: 1 / -1; min-height: 300px; border-top: 1px solid var(--gray2); border-left: none; }
+    }
+
+    /* Mobile helpers (hidden by default) */
+    .mobile-cities-scroll { display: none; }
+    .mobile-filters-row { display: none; }
+    .mobile-tabs { display: none; }
+
+    @media (max-width: 780px) {
+      .modal-locations { border-radius: 18px; max-height: 96vh; }
+      .modal-head { padding: 20px 22px 18px; }
+      .modal-head h2 { font-size: 18px; }
+      .modal-head p { font-size: 12px; }
+      .modal-search-row { padding: 14px 18px 6px; }
+      .search-wrap input { padding: 12px 12px; font-size: 14px; }
+      .btn-geo { padding: 12px 14px; font-size: 12px; }
+
+      /* Hide old horizontal chips */
+      .mobile-cities-scroll { display: none; }
+
+      /* Mobile dropdown filters row (Region + Retail) */
+      .mobile-filters-row {
+        display: flex;
+        gap: 10px;
+        padding: 12px 18px;
+        background: var(--gray);
+        border-bottom: 1px solid var(--gray2);
+      }
+      .mobile-filter-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .mobile-filter-label {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--muted);
+      }
+      .mobile-filter-select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1.5px solid var(--gray2);
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        background: var(--white);
+        cursor: pointer;
+        outline: none;
+        appearance: auto;
+        transition: border-color 0.2s;
+      }
+      .mobile-filter-select:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(21,87,214,0.12);
+      }
+
+      /* Hide desktop retail filter inside stores-col on mobile */
+      .retail-filter-row { display: none; }
+
+      /* Tabs Lista / Mapa */
+      .mobile-tabs {
+        display: flex;
+        gap: 0;
+        background: var(--white);
+        border-bottom: 1px solid var(--gray2);
+        padding: 0 18px;
+      }
+      .mobile-tab {
+        flex: 1;
+        padding: 13px 8px;
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .mobile-tab.active {
+        color: var(--blue);
+        border-bottom-color: var(--blue);
+      }
+
+      .mobile-tabs { display: none !important; }
+      .modal-body {
+        display: block;
+        position: relative;
+        overflow: hidden;
+        min-height: auto;
+        height: auto;
+      }
+      .cities-col { display: none; }
+      .map-col { display: none !important; }
+      .stores-col {
+        position: static;
+        width: 100%;
+        max-height: 54vh;
+        min-height: 40vh;
+        overflow-y: auto;
+        padding: 14px 16px 20px;
+        border: none !important;
+      }
+    }
+
+    .cities-col {
+      border-right: 1px solid var(--gray2);
+      overflow-y: auto;
+      padding: 14px 16px 24px;
+      background: var(--gray);
+    }
+    @media (max-width: 780px) {
+      .cities-col {
+        border-right: none;
+        border-bottom: 1px solid var(--gray2);
+        max-height: 180px;
+      }
+    }
+    .cities-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 6px 10px 10px;
+    }
+    .city-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      transition: all 0.18s;
+      margin-bottom: 4px;
+      border: 1.5px solid transparent;
+    }
+    .city-item:hover { background: var(--white); }
+    .city-item.active {
+      background: var(--white);
+      border-color: var(--blue);
+      color: var(--blue);
+      box-shadow: 0 4px 14px rgba(21,87,214,0.12);
+    }
+    .city-count {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--blue-light);
+      color: var(--blue);
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+    .city-item.active .city-count { background: var(--blue); color: var(--white); }
+
+    .stores-col {
+      overflow-y: auto;
+      padding: 18px 24px 28px;
+      background: var(--white);
+    }
+    .stores-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--blue-light);
+    }
+    .stores-head h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .stores-head span {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue);
+      background: var(--blue-light);
+      padding: 4px 12px;
+      border-radius: 99px;
+    }
+
+    /* Retail filter dropdown */
+    .retail-filter-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding: 0 2px;
+    }
+    .retail-filter-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .retail-filter-select {
+      flex: 1;
+      max-width: 220px;
+      padding: 8px 12px;
+      border: 1.5px solid var(--gray2);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      background: var(--white);
+      cursor: pointer;
+      transition: border-color 0.2s;
+      outline: none;
+      appearance: auto;
+    }
+    .retail-filter-select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(21,87,214,0.12);
+    }
+
+    .store-row {
+      background: var(--white);
+      border: 1.5px solid var(--gray2);
+      border-radius: 14px;
+      padding: 14px 16px 14px 14px;
+      margin-bottom: 10px;
+      transition: all 0.24s cubic-bezier(.4,0,.2,1);
+    }
+    .store-row:hover {
+      border-color: var(--blue);
+      box-shadow: 0 6px 20px rgba(21,87,214,0.12);
+      transform: translateX(3px);
+    }
+    .store-row-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .store-row-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .store-row-main {
+      flex: 1;
+      min-width: 0;
+    }
+    .store-row-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.3;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      padding-top: 2px;
+    }
+    .store-row-addr {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: 3px;
+      line-height: 1.45;
+      overflow-wrap: break-word;
+    }
+    .store-row-maplink {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+      background: var(--blue-light);
+      border: none;
+      color: var(--blue);
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 5px 11px 5px 9px;
+      border-radius: 99px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: all 0.2s;
+      line-height: 1.2;
+    }
+    .store-row-maplink:hover {
+      background: var(--blue);
+      color: var(--white);
+      transform: translateY(-1px);
+    }
+    .store-row-maplink svg { flex-shrink: 0; }
+    .store-row-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--gray);
+      border: none;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 7px 11px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      height: fit-content;
+      margin-top: 4px;
+      white-space: nowrap;
+    }
+    .store-row-toggle:hover { background: var(--blue-light); }
+    .store-row-toggle .chev {
+      display: inline-block;
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+      font-size: 10px;
+    }
+    .store-row-toggle.open .chev { transform: rotate(180deg); }
+
+    .store-row-expand {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(.4,0,.2,1), margin-top 0.3s;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .store-row-expand.open {
+      max-height: 220px;
+      margin-top: 14px;
+    }
+    .tarifa-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: var(--white);
+      border: none;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 18px rgba(21,87,214,0.3);
+      flex: 1 1 auto;
+      justify-content: center;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .tarifa-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(21,87,214,0.4); }
+
+    /* ── MAP COLUMN ── */
+    .map-col {
+      position: relative;
+      background: var(--gray);
+      border-left: 1px solid var(--gray2);
+      overflow: hidden;
+    }
+    .map-col .leaflet-container {
+      width: 100%;
+      height: 100%;
+      font-family: 'Lexend', sans-serif;
+      background: #e5ecf5;
+    }
+    .map-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 500;
+      background: var(--white);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 8px 14px;
+      border-radius: 99px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    /* Custom Leaflet marker */
+    .zbl-marker-wrap {
+      position: relative;
+      width: 38px;
+      height: 46px;
+    }
+    .zbl-marker {
+      position: absolute;
+      top: 0; left: 0;
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      box-shadow: 0 6px 18px rgba(21,87,214,0.45);
+      border: 3px solid var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.22s cubic-bezier(.4,0,.2,1);
+    }
+    .zbl-marker-inner {
+      transform: rotate(45deg);
+      font-size: 16px;
+    }
+    .zbl-marker-wrap:hover .zbl-marker,
+    .zbl-marker-wrap.active .zbl-marker {
+      transform: rotate(-45deg) scale(1.15);
+    }
+    .zbl-marker-wrap.active .zbl-marker {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      box-shadow: 0 8px 22px rgba(16,185,129,0.5);
+    }
+
+    /* Leaflet popup override */
+    .leaflet-popup-content-wrapper {
+      border-radius: 14px !important;
+      padding: 2px !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+    }
+    .leaflet-popup-content {
+      margin: 14px 16px !important;
+      font-family: 'Lexend', sans-serif !important;
+      min-width: 200px;
+    }
+    .leaflet-popup-tip { box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important; }
+    .popup-store-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+    .popup-store-addr {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+    .popup-inscribirme {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: var(--white) !important;
+      border: none;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Lexend', sans-serif;
+      text-align: center;
+      text-decoration: none;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(21,87,214,0.3);
+    }
+    .popup-inscribirme:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(21,87,214,0.4);
+    }
+    .popup-tarifa-btn {
+      display: block;
+      width: 100%;
+      background: rgba(91,33,182,0.08);
+      color: var(--blue);
+      border: 1.5px solid var(--blue);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Lexend', sans-serif;
+      text-align: center;
+      margin-bottom: 6px;
+      transition: all 0.2s;
+    }
+    .popup-tarifa-btn:hover {
+      background: var(--blue);
+      color: var(--white);
+    }
+    .popup-tarifa-link {
+      display: block;
+      margin-top: 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--blue);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Inscribirme button (store row) */
+    .inscribirme-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: var(--white);
+      border: none;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 18px rgba(16,185,129,0.35);
+      flex: 1 1 auto;
+      justify-content: center;
+      text-decoration: none;
+      text-align: center;
+      line-height: 1.2;
+    }
+    .inscribirme-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(16,185,129,0.45);
+    }
+
+    .store-row.selected {
+      border-color: #10B981;
+      background: #ECFDF5;
+      box-shadow: 0 6px 18px rgba(16,185,129,0.15);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-icon { font-size: 40px; margin-bottom: 10px; }
+    .empty-title { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .empty-text { font-size: 13px; }
+
+    /* ── TARIFAS MODAL (imagen desde Drive) ── */
+    .tarifa-modal-img {
+      background: var(--blue);
+      width: 95vw;
+      max-width: 700px;
+      border-radius: 20px;
+      overflow: hidden;
+      animation: slideUp 0.32s cubic-bezier(.4,0,.2,1);
+      box-shadow: inset 0 0 0 1px var(--blue), 0 28px 70px rgba(0,0,0,0.25);
+      outline: 2px solid var(--blue);
+      outline-offset: -2px;
+    }
+    .tarifa-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--blue);
+      border-radius: 20px 20px 0 0;
+      gap: 12px;
+    }
+    .tarifa-modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--white);
+    }
+    .tarifa-close-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      border: none;
+      color: var(--white);
+      font-size: 22px;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .tarifa-close-btn:hover { background: rgba(255,255,255,0.35); transform: rotate(90deg); }
+    .tarifa-img-wrap {
+      position: relative;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f5f7;
+    }
+    .tarifa-iframe {
+      width: 100%;
+      height: 75vh;
+      max-height: 700px;
+      border: none;
+      display: block;
+      transition: opacity 0.3s;
+    }
+    .tarifa-loading {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    /* Mobile: tarifa modal fullscreen */
+    @media (max-width: 640px) {
+      .tarifa-modal-img {
+        width: 100vw;
+        max-width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+      .tarifa-iframe {
+        height: calc(100vh - 60px);
+        max-height: none;
+      }
+      .tarifa-modal-head {
+        padding: 12px 16px;
+      }
+      .tarifa-modal-title {
+        font-size: 15px;
+      }
+      .tarifa-overlay {
+        padding: 0;
+      }
+    }
+
+    /* ── VER TARIFAS BUTTON ── */
+    .ver-tarifas-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1.5px solid var(--blue);
+      background: rgba(91,33,182,0.06);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ver-tarifas-btn:hover {
+      background: var(--blue);
+      color: var(--white);
+    }
+    .store-row-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 0;
+      width: 100%;
+    }
+
+    /* ── SHEET LOADING / ERROR ── */
+    .sheet-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 48px 20px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .sheet-error {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      font-size: 14px;
+      color: #b91c1c;
+      background: #fef2f2;
+      border-radius: 10px;
+      margin: 12px 16px;
+    }
+
+    /* Fade in classes for animations */
+    .fade-in {
+      animation: fadeInUp 0.4s cubic-bezier(.4,0,.2,1) both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .stagger-1 { animation-delay: 0.05s; }
+    .stagger-2 { animation-delay: 0.12s; }
+    .stagger-3 { animation-delay: 0.20s; }
+
+    /* ── Video card ── */
+    .video-card {
+      background: var(--white);
+      border-radius: 18px;
+      box-shadow: 0 2px 12px rgba(21,87,214,0.07);
+      overflow: hidden;
+    }
+    .video-card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px 14px;
+    }
+    .video-card-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #fff;
+      font-weight: 900;
+    }
+    .video-card-title { font-size: 16px; font-weight: 800; color: var(--text); }
+    .video-card-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .video-embed {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 */
+      background: #0a0a0a;
+    }
+    .video-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .video-thumb-link {
+      display: block;
+      position: relative;
+      width: 100%;
+      border-radius: 0 0 16px 16px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .video-thumb-img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+    }
+    .video-thumb-play {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 64px; height: 64px;
+      background: rgba(255,0,0,0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      transition: transform 0.2s;
+    }
+    .video-thumb-link:hover .video-thumb-play {
+      transform: translate(-50%, -50%) scale(1.12);
+    }
+    /* ── VIDEO PLAYER MODAL ── */
+    .video-overlay { z-index: 310; }
+    .video-modal {
+      width: 95vw;
+      max-width: 800px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      animation: slideUp 0.3s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 28px 70px rgba(0,0,0,0.5);
+    }
+    .video-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: var(--blue);
+      gap: 12px;
+    }
+    .video-modal-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--white);
+    }
+    .video-modal-body {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+    }
+    .video-modal-body iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+    @media (max-width: 640px) {
+      .video-modal {
+        width: 100vw;
+        max-width: 100vw;
+        border-radius: 0;
+      }
+      .video-overlay { padding: 0; align-items: center; }
+    }
+    .video-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: rgba(255,255,255,0.7);
+      gap: 10px;
+    }
+    .video-placeholder-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 2px solid rgba(255,255,255,0.15);
+    }
+    .video-placeholder-text {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .video-placeholder-sub {
+      font-size: 11px;
+      opacity: 0.5;
+    }
+
+    /* Footer */
+    .footer { text-align: center; padding: 26px 20px; color: var(--muted); font-size: 12px; }
+
+    /* ── CHATBOT WIDGET ── */
+    .chat-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 600;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: #fff;
+      border: none;
+      font-size: 26px;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(21,87,214,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s;
+    }
+    .chat-fab:hover { transform: scale(1.08); box-shadow: 0 12px 36px rgba(21,87,214,0.55); }
+    .chat-fab.open { border-radius: 14px; }
+
+    .chat-window {
+      position: fixed;
+      bottom: 96px;
+      right: 24px;
+      z-index: 500;
+      width: 380px;
+      max-height: 520px;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 16px 60px rgba(21,87,214,0.25), 0 0 0 1px rgba(21,87,214,0.08);
+      overflow: hidden;
+      animation: chatSlideUp 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes chatSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: #fff;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-header-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .chat-header-info { flex: 1; }
+    .chat-header-name { font-weight: 800; font-size: 14px; }
+    .chat-header-status { font-size: 11px; opacity: 0.8; }
+    .chat-header-close {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .chat-header-close:hover { background: rgba(255,255,255,0.3); }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 260px;
+      max-height: 340px;
+      background: #f8faff;
+    }
+
+    .chat-msg {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+    .chat-msg.bot {
+      align-self: flex-start;
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--gray2);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-msg.bot strong { font-weight: 600; }
+    .chat-msg.bot ul { margin: 4px 0 4px 16px; padding: 0; }
+    .chat-msg.bot li { margin-bottom: 3px; }
+    .chat-msg.bot a { color: var(--blue); text-decoration: underline; font-weight: 500; }
+    .chat-msg.bot a:hover { color: var(--blue-dark); }
+    .chat-msg.bot p { margin: 0 0 6px 0; }
+    .chat-msg.bot p:last-child { margin-bottom: 0; }
+    .chat-msg.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg.typing {
+      align-self: flex-start;
+      background: #fff;
+      border: 1px solid var(--gray2);
+      border-bottom-left-radius: 4px;
+      display: flex;
+      gap: 4px;
+      padding: 14px 18px;
+    }
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--blue);
+      opacity: 0.4;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.3; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px;
+      border-top: 1px solid var(--gray2);
+      background: #fff;
+    }
+    .chat-input-row input {
+      flex: 1;
+      border: 1.5px solid var(--gray2);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-family: 'Lexend', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input-row input:focus { border-color: var(--blue); }
+    .chat-input-row button {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: var(--blue);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .chat-input-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .chat-input-row button:hover:not(:disabled) { background: var(--blue2); }
+
+    @media (max-width: 780px) {
+      .chat-window {
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-height: 100dvh;
+        border-radius: 0;
+      }
+      .chat-messages { max-height: calc(100dvh - 160px); min-height: 200px; }
+      .chat-fab { bottom: 16px; right: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- FAQ extra: carga chatbot-faq.js si existe (opcional) -->
+<script>
+  if (typeof CHATBOT_FAQ_EXTRA === "undefined") { var CHATBOT_FAQ_EXTRA = ""; }
+</script>
+<script src="chatbot-faq.js" onerror="/* archivo opcional, sin efecto si no existe */"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo, useRef } = React;
+
+/* ─────────────────────────────────────────────────
+   DATOS DE LOS ROLES
+   ───────────────────────────────────────────────── */
+const ROLES = {
+  Picker: {
+    key: "Picker",
+    emoji: "🛒",
+    color: "#1557D6",
+    descripcion: "Un picker selecciona, ordena y empaqueta los productos de las compras realizadas en las tiendas asociadas, dejando el pedido listo para la entrega al cliente. Puedes encontrar disponibilidad con este rol en salas Jumbo, Santa Isabel, Lider, Unimarc, Edarkstore y Alvi.  ",
+    requisitos: [
+      "Teléfono Android",
+      "Ser mayor de edad",
+      "Cédula de identidad al día",
+      "Iniciación de actividades en Servicios de Impuestos Internos (SII)",
+      "Ser titular de una cuenta bancaria",
+      "Muchas ganas de generar ganancias",
+    ],
+    ganancias: [
+      { label: "Por Hora",      value: "$2.800 ~ $3.500" },
+      { label: "Por Día (aprox 9 hrs diarias)",       value: "$25.200 ~ $31.500" },
+      { label: "Semanalmente (considerando 5 días)",  value: "$126.000 ~ $157.500" },
+      { label: "Mensual",                             value: "$541.800 ~ $677.250" },
+    ],
+    tarifa: {
+      title: "Tarifas – Picker",
+      items: [
+        { label: "Hora regular",         value: "$5.000" },
+        { label: "Hora punta",           value: "$6.500" },
+        { label: "Bono productividad",   value: "+ $15.000" },
+        { label: "Pedido Express",       value: "+ $1.200" },
+      ],
+    },
+    faqs: [
+      { q: "¿Cuánto tardo en empezar como Picker?",
+        a: "Una vez que completas tu registro y capacitación, puedes empezar a trabajar en menos de 24 horas." },
+      { q: "¿Cómo y cuándo recibo mis pagos?",
+        a: "Los pagos son semanales. Todos los días martes o miércoles podrás ver tus ganancias en tu wallet de Zubale de los pedidos realizados del lunes al domingo de la semana anterior. Los días martes se acreditan las ganancias generadas en Jumbo, Santa Isabel, Edarkstore y Unimarc. Los días miércoles se acreditan las ganancias de las salas Lider." },
+      { q: "¿Cómo retiro mis ganancias?",
+        a: "Una vez que recibas tu primer pago, puedes retirar tus ganancias desde de la wallet. Al querer realizar el primer retiro, puedes ingresar los datos de tu cuenta bancaria en la cual quieres recibir el dinero. Es importante que la cuenta sea propia y que los datos ingresados sean del número de cuenta y no de tarjeta de débito." },  
+      { q: "¿Necesito experiencia previa en supermercados?",
+        a: "No es necesaria. En sala se te realizará una inducción del proceso de armado." },
+      { q: "¿Puedo elegir mis propios horarios?",
+        a: "Sí. Como Picker eliges en qué turnos quieres trabajar según los cupos disponibles en la sala que elijas." },
+      { q: "¿Que es el Bundle de Conectividad?",
+        a: "El Bundle de conectividad es el monto minimo que puedes ganar en sala, cumpliendo con los requisitos." },
+    ],
+    videoYT: null, // ← Pega aquí el ID del video de YouTube para Picker (ej: "dQw4w9WgXcQ")
+  },
+  Shopper: {
+    key: "Shopper",
+    emoji: "🛍️",
+    color: "#1557D6",
+    descripcion: "Un shopper prepara el pedido dentro de la tienda, lo empaqueta y luego lo entrega en el domicilio del cliente utilizando su auto o moto. Puedes encontrar disponibilidad como shopper en salas Lider, Acuenta, Alvi o Unimarc",
+    requisitos: [
+      "Teléfono Android",
+      "Vehículo (auto o moto) o bicicleta",
+      "Licencia de conducir vigente - Si operas en auto o moto",
+      "Ser mayor de edad",
+      "Cédula de identidad al día",
+      "Iniciación de actividades en Servicios de Impuestos Internos (SII)",
+      "Ser titular de una cuenta bancaria",
+    ],
+    ganancias: [
+      { label: "Por Hora",      value: "$5.500 ~ $7.500" },
+      { label: "Por Día (aprox 9 hrs diarias)",       value: "$49.500 ~ $67.500" },
+      { label: "Semanalmente (considerando 5 días)",  value: "$247.500 ~ $337.500" },
+    ],
+    vehiculos: [
+      {
+        nombre: "Auto",
+        emoji: "🚗",
+        ganancias: [
+          { label: "Por Hora",                            value: "$5.500 ~ $7.500" },
+          { label: "Por Día (aprox 9 hrs diarias)",       value: "$49.500 ~ $67.500" },
+          { label: "Semanalmente (considerando 5 días)",  value: "$247.500 ~ $337.500" },
+          { label: "Mensual",                             value: "$1.064.250 ~ $1.451.000" },
+        ],
+      },
+      {
+        nombre: "Moto",
+        emoji: "🏍️",
+        ganancias: [
+          { label: "Por Hora",                            value: "$5.000 ~ $7.000" },
+          { label: "Por Día (aprox 9 hrs diarias)",       value: "$45.000 ~ $63.000" },
+          { label: "Semanalmente (considerando 5 días)",  value: "$225.000 ~ $315.000" },
+          { label: "Mensual",                             value: "$967.500 ~ $1.354.000" },
+        ],
+      },
+      {
+        nombre: "Bici",
+        emoji: "🚲",
+        ganancias: [
+          { label: "Por Hora",                            value: "$4.500 ~ $6.500" },
+          { label: "Por Día (aprox 9 hrs diarias)",       value: "$40.500 ~ $58.500" },
+          { label: "Semanalmente (considerando 5 días)",  value: "$202.500 ~ $292.500" },
+          { label: "Mensual",                             value: "$870.750 ~ $1.257.000" },
+        ],
+      },
+    ],
+    tarifa: {
+      title: "Tarifas – Shopper",
+      items: [
+        { label: "Hora regular",         value: "$7.000" },
+        { label: "Hora punta",           value: "$9.000" },
+        { label: "Bono por entrega",     value: "+ $2.500" },
+        { label: "Bono km recorrido",    value: "+ $450 / km" },
+      ],
+    },
+    faqs: [
+      { q: "¿Cuánto tardo en empezar como Shopper?",
+        a: "Una vez completada la capacitación y verificación de documentos de tu vehículo, puedes empezar a operar en menos de 24 horas." },
+      { q: "¿Cómo y cuándo recibo mis pagos?",
+        a: "Los pagos son semanales. Todos los días martes o miércoles podrás ver tus ganancias en tu wallet de Zubale de los pedidos realizados del lunes al domingo de la semana anterior. Los días martes se acreditan las ganancias generadas en Unimarc. Los días miércoles se acreditan las ganancias de las salas Lider y Acuenta ." },
+      { q: "¿Cómo retiro mis ganancias?",
+        a: "Una vez que recibas tu primer pago, puedes retirar tus ganancias desde de la wallet. Al querer realizar el primer retiro, puedes ingresar los datos de tu cuenta bancaria en la cual quieres recibir el dinero. Es importante que la cuenta sea propia y que los datos ingresados sean del número de cuenta y no de tarjeta de débito." }, 
+      { q: "¿Puedo elegir mis propios horarios?",
+        a: "Totalmente. Tú eliges los turnos que más te acomoden según los cupos disponibles en cada sala." },
+      { q: "¿Que es el Bundle de Conectividad?",
+        a: "El Bundle de conectividad es el monto minimo que puedes ganar en sala, cumpliendo con los requisitos." },
+    ],
+    videoYT: null, // ← Pega aquí el ID del video de YouTube para Shopper
+  },
+  Driver: {
+    key: "Driver",
+    emoji: "🚙",
+    color: "#1557D6",
+    descripcion: "Un driver es quien retira un pedido ya listo en la tienda y lo lleva al domicilio del cliente. Puedes encontrar disponibilidad como driver en salas Jumbo, Santa Isabel, Lider, Tottus o  Unimarc",
+    requisitos: [
+      "Vehículo",
+      "Documentación del vehículo al día",
+      "Teléfono Android",
+      "Ser mayor de edad",
+      "Cédula de identidad al día",
+      "Ser titular de una cuenta bancaria",
+      "Iniciación de actividades en Servicios de Impuestos Internos (SII)",
+    ],
+    ganancias: [
+      { label: "Por Hora",      value: "$5.000 ~ $7.000" },
+      { label: "Por Día (aprox 9 hrs diarias)",       value: "$45.000 ~ $63.000" },
+      { label: "Semanalmente (considerando 5 días)",  value: "$225.000 ~ $315.000" },
+    ],
+    vehiculos: [
+      {
+        nombre: "Auto",
+        emoji: "🚗",
+        ganancias: [
+          { label: "Por Hora",                            value: "$5.000 ~ $7.000" },
+          { label: "Por Día (aprox 9 hrs diarias)",       value: "$45.000 ~ $63.000" },
+          { label: "Semanalmente (considerando 5 días)",  value: "$225.000 ~ $315.000" },
+          { label: "Mensual",                             value: "$967.500 ~ $1.354.000" },
+        ],
+      },
+      {
+        nombre: "Moto",
+        emoji: "🏍️",
+        ganancias: [
+          { label: "Por Hora",                            value: "$4.500 ~ $6.500" },
+          { label: "Por Día (aprox 9 hrs diarias)",       value: "$40.500 ~ $58.500" },
+          { label: "Semanalmente (considerando 5 días)",  value: "$202.500 ~ $292.500" },
+          { label: "Mensual",                             value: "$870.750 ~ $1.257.000" },
+        ],
+      },
+      {
+        nombre: "Bici",
+        emoji: "🚲",
+        ganancias: [
+          { label: "Por Hora",                            value: "$4.000 ~ $6.000" },
+          { label: "Por Día (aprox 9 hrs diarias)",       value: "$36.000 ~ $54.000" },
+          { label: "Semanalmente (considerando 5 días)",  value: "$180.000 ~ $270.000" },
+          { label: "Mensual",                             value: "$774.000 ~ $1.161.000" },
+        ],
+      },
+    ],
+    tarifa: {
+      title: "Tarifas – Driver",
+      items: [
+        { label: "Tarifa base entrega",  value: "$2.200" },
+        { label: "Bono por km",          value: "+ $550 / km" },
+        { label: "Pedido Express",       value: "+ $1.800" },
+        { label: "Bono horario punta",   value: "+ 20%" },
+      ],
+    },
+    faqs: [
+      { q: "¿Cómo y cuándo recibo mis pagos?",
+        a: "Los pagos son semanales. Todos los días martes o miércoles podrás ver tus ganancias en tu wallet de Zubale de los pedidos realizados del lunes al domingo de la semana anterior. Los días martes se acreditan las ganancias generadas en Jumbo, Santa Isabel, Unimarc y Tottus. Los días miércoles se acreditan las ganancias de las salas Lider y Acuenta ." },
+      { q: "¿Cómo retiro mis ganancias?",
+        a: "Una vez que recibas tu primer pago, puedes retirar tus ganancias desde de la wallet. Al querer realizar el primer retiro, puedes ingresar los datos de tu cuenta bancaria en la cual quieres recibir el dinero. Es importante que la cuenta sea propia y que los datos ingresados sean del número de cuenta y no de tarjeta de débito." }, 
+      { q: "¿Puedo elegir mis horarios y zonas de entrega?",
+        a: "Sí. Tú eliges los turnos y zonas que más te acomoden dentro de los cupos disponibles." },
+      { q: "¿Que es el Bundle de Conectividad?",
+        a: "El Bundle de conectividad es el monto minimo que puedes ganar en sala, cumpliendo con los requisitos." },
+    ],
+    videoYT: null, // ← Pega aquí el ID del video de YouTube para Driver
+  },
+};
+
+/* ─────────────────────────────────────────────────
+   REGIONES, SALAS, RETAILS
+   ───────────────────────────────────────────────── */
+const RETAILS = ["Todos", "Unimarc", "Tottus", "Alvi", "Santa Isabel", "Jumbo", "Lider", "Acuenta", "Edarkstore"];
+
+const DEFAULT_FORM_URL = "https://www.zubalero.com/cl/";
+const getFormUrl = (storeName) => DEFAULT_FORM_URL;
+
+function getRetail(name) {
+  const n = name.toLowerCase();
+  if (n.startsWith("unimarc")) return "Unimarc";
+  if (n.startsWith("tottus"))  return "Tottus";
+  if (n.startsWith("alvi"))    return "Alvi";
+  if (n.startsWith("santa isabel") || n.startsWith("santa is")) return "Santa Isabel";
+  if (n.startsWith("jumbo"))   return "Jumbo";
+  if (n.startsWith("lider") || n.startsWith("líder")) return "Lider";
+  if (n.startsWith("sba") || n.startsWith("acuenta")) return "Acuenta";
+  if (n.startsWith("edarkstore")) return "Edarkstore";
+  return "Otro";
+}
+
+/* ─────────────────────────────────────────────────
+   GOOGLE APPS SCRIPT — fuente de datos de salas
+   ───────────────────────────────────────────────── */
+// ⬇️ PEGA AQUÍ TU URL de Google Apps Script (ver google-apps-script.js) ⬇️
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyznjxIn99mewSPEBf3rEMMsI_7mGneJo5rf3HT9gk_HhdKweUSM0m5vSgVHKKkN3gE/exec";
+
+/* Extrae el file ID de un link de Drive y devuelve la URL de preview (funciona en iframe) */
+function driveToPreviewUrl(link) {
+  if (!link) return null;
+  const s = String(link).trim();
+  if (!s) return null;
+  let m = s.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  m = s.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  if (s.startsWith("http")) return s;
+  return null;
+}
+
+/* Centros aproximados por región (para centrar el mapa) */
+const REGION_CENTERS = {
+  "metropolitana": { center: [-33.45, -70.67], zoom: 11 },
+  "valparaiso": { center: [-33.03, -71.56], zoom: 10 },
+  "bio bio": { center: [-36.80, -73.07], zoom: 11 },
+  "biobio": { center: [-36.80, -73.07], zoom: 11 },
+  "coquimbo": { center: [-29.90, -71.25], zoom: 12 },
+  "antofagasta": { center: [-23.65, -70.40], zoom: 12 },
+  "araucania": { center: [-38.74, -72.59], zoom: 12 },
+  "los lagos": { center: [-41.47, -72.94], zoom: 12 },
+  "aysen": { center: [-45.40, -72.68], zoom: 12 },
+  "ohiggins": { center: [-34.17, -70.74], zoom: 12 },
+  "o'higgins": { center: [-34.17, -70.74], zoom: 12 },
+  "maule": { center: [-35.43, -71.66], zoom: 11 },
+  "nuble": { center: [-36.62, -72.10], zoom: 11 },
+  "ñuble": { center: [-36.62, -72.10], zoom: 11 },
+  "los rios": { center: [-39.81, -73.24], zoom: 12 },
+  "atacama": { center: [-27.37, -70.33], zoom: 12 },
+  "tarapaca": { center: [-20.21, -69.95], zoom: 12 },
+  "magallanes": { center: [-53.16, -70.92], zoom: 12 },
+  "arica": { center: [-18.48, -70.33], zoom: 12 },
+};
+
+function getRegionCenter(regionName) {
+  const clean = regionName.toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/^(v+i*|iv|ix|x+i*|xi+|[0-9]+)\s+region\s+(de(l)?\s+)?/i, "")
+    .replace(/region\s+(de(l)?\s+)?/i, "")
+    .trim();
+  for (const [k, v] of Object.entries(REGION_CENTERS)) {
+    const kn = k.normalize("NFD").replace(/[̀-ͯ]/g, "");
+    if (clean.includes(kn) || kn.includes(clean)) return v;
+  }
+  return { center: [-33.45, -70.67], zoom: 10 };
+}
+
+/* Encuentra la key del header que contenga el substring (case-insensitive) */
+function findKey(obj, ...needles) {
+  const keys = Object.keys(obj);
+  for (const needle of needles) {
+    const found = keys.find(k => k.toLowerCase().includes(needle));
+    if (found) return found;
+  }
+  return null;
+}
+
+/* Fetch desde Google Apps Script → estructura REGIONES agrupada por región */
+async function fetchSalasFromSheet() {
+  const url = GAS_URL + (GAS_URL.includes("?") ? "&" : "?") + "sheet=Panel";
+  const res = await fetch(url);
+  const rows = await res.json();
+
+  if (!Array.isArray(rows) || rows.length === 0) return [];
+
+  // Detectar nombres de columnas (flexibles)
+  const sample = rows[0];
+  const allKeys = Object.keys(sample);
+  console.log("[Zubale] Columnas del Sheet:", allKeys);
+  console.log("[Zubale] Primer registro:", JSON.stringify(sample));
+
+  const kEstado    = findKey(sample, "estado");
+  const kCliente   = findKey(sample, "cliente");
+  const kTienda    = findKey(sample, "sala", "tienda");
+  const kRol       = findKey(sample, "servicio", "rol");
+  const kLat       = findKey(sample, "lat");
+  const kLng       = findKey(sample, "long", "lng");
+  const kComuna    = findKey(sample, "comuna");
+  const kRegion    = findKey(sample, "region", "región");
+  const kDireccion = findKey(sample, "direcc", "address");
+  const kTarifa    = findKey(sample, "tarifa", "drive");
+
+  // Si no encontró la columna de tarifa, probar con la última columna
+  const kTarifaFinal = kTarifa || allKeys[allKeys.length - 1];
+  console.log("[Zubale] Columna tarifa detectada:", kTarifa, "→ usando:", kTarifaFinal);
+
+  const salas = [];
+  for (const r of rows) {
+    const estado = String(r[kEstado] || "").trim().toUpperCase();
+    if (estado === "OFF") continue;
+
+    const name = String(r[kTienda] || "").trim();
+    if (!name) continue;
+
+    // GAS devuelve números nativos — no hay problema de coma/punto
+    const lat = typeof r[kLat] === "number" ? r[kLat] : parseFloat(String(r[kLat]).replace(/,/g, ".")) || 0;
+    const lng = typeof r[kLng] === "number" ? r[kLng] : parseFloat(String(r[kLng]).replace(/,/g, ".")) || 0;
+
+    // Obtener tarifa — puede venir como string URL o como otro tipo
+    const rawTarifa = r[kTarifaFinal];
+    const tarifaStr = (rawTarifa && typeof rawTarifa === "object") ? (rawTarifa.url || rawTarifa.toString()) : String(rawTarifa || "");
+
+    const previewUrl = driveToPreviewUrl(tarifaStr);
+    salas.push({
+      name,
+      cliente: String(r[kCliente] || "").trim(),
+      rol: String(r[kRol] || "Picker").trim(),
+      lat,
+      lng,
+      comuna: String(r[kComuna] || "").trim(),
+      region: String(r[kRegion] || "Sin región").trim(),
+      direccion: String(r[kDireccion] || "").trim(),
+      tarifaLink: previewUrl,
+    });
+    if (previewUrl) console.log("[Zubale] ✅ Tarifa:", name, "→", previewUrl);
+  }
+
+  // Agrupar por región
+  const regionMap = {};
+  salas.forEach(s => {
+    if (!regionMap[s.region]) {
+      const rc = getRegionCenter(s.region);
+      regionMap[s.region] = { nombre: s.region, center: rc.center, zoom: rc.zoom, salas: [] };
+    }
+    regionMap[s.region].salas.push(s);
+  });
+
+  return Object.values(regionMap).sort((a, b) => b.salas.length - a.salas.length);
+}
+
+/* REGIONES ahora se carga dinámicamente desde Google Sheets via fetchSalasFromSheet() */
+
+/* ─────────────────────────────────────────────────
+   HEADER
+   ───────────────────────────────────────────────── */
+function Header() {
+  return (
+    <header className="header">
+      <div className="header-logo">
+        <img
+          src="https://www.zubale.com/cl/wp-content/uploads/2023/12/logo_zubale_2023.png"
+          alt="Zubale"
+          style={{ height: "32px", width: "auto", imageRendering: "auto" }}
+        />
+      </div>
+    </header>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   DATOS DE GUÍAS (slides extraídos del PPT)
+   ───────────────────────────────────────────────── */
+const PICKER_GUIA = [
+  { img: "guias/picker-slide-1.jpg", title: "Guía del Buen Zubalero" },
+  { img: "guias/picker-slide-2.jpg", title: "Cómo ser un Buen Picker" },
+  { img: "guias/picker-slide-3.jpg", title: "Contactabilidad con el cliente" },
+  { img: "guias/picker-slide-4.jpg", title: "Sigue estos tips" },
+];
+
+const GUIAS = {
+  Picker: PICKER_GUIA,
+  Shopper: PICKER_GUIA,
+  Driver: PICKER_GUIA,
+};
+
+/* ─────────────────────────────────────────────────
+   MODAL: Guías (carousel de slides)
+   ───────────────────────────────────────────────── */
+function GuiasModal({ rol, onClose }) {
+  const slides = GUIAS[rol] || [];
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") setIdx(i => Math.min(slides.length - 1, i + 1));
+      if (e.key === "ArrowLeft")  setIdx(i => Math.max(0, i - 1));
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [slides.length]);
+
+  const total = slides.length;
+  const slide = slides[idx];
+
+  return (
+    <div className="overlay guias-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="guias-modal">
+        <div className="guias-head">
+          <div className="guias-head-text">
+            <div className="guias-tag">📚 Guía oficial · {rol}</div>
+            <div className="guias-title">Guía del Buen Zubalero</div>
+            <div className="guias-sub">
+              Todo lo que necesitas saber para ser un excelente {rol} con Zubale.
+            </div>
+          </div>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+
+        {total === 0 ? (
+          <div className="guias-empty">
+            <div className="guias-empty-icon">📖</div>
+            <div className="guias-empty-title">Guía en preparación</div>
+            <div className="guias-empty-text">
+              Estamos preparando la guía oficial para {rol}. Muy pronto la tendrás disponible acá.
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="guias-stage">
+              <button
+                className={"guias-nav prev " + (idx === 0 ? "disabled" : "")}
+                onClick={() => setIdx(Math.max(0, idx - 1))}
+                disabled={idx === 0}
+                aria-label="Anterior"
+              >
+                ‹
+              </button>
+              <div className="guias-slide-wrap">
+                <img
+                  key={idx}
+                  src={slide.img}
+                  alt={slide.title}
+                  className="guias-slide fade-in"
+                />
+              </div>
+              <button
+                className={"guias-nav next " + (idx === total - 1 ? "disabled" : "")}
+                onClick={() => setIdx(Math.min(total - 1, idx + 1))}
+                disabled={idx === total - 1}
+                aria-label="Siguiente"
+              >
+                ›
+              </button>
+              {/* Mobile-only nav row (shown below slide via CSS) */}
+              <div className="guias-mobile-nav">
+                <button
+                  className={"guias-nav " + (idx === 0 ? "disabled" : "")}
+                  onClick={() => setIdx(Math.max(0, idx - 1))}
+                  disabled={idx === 0}
+                  aria-label="Anterior"
+                >
+                  ‹
+                </button>
+                <button
+                  className={"guias-nav " + (idx === total - 1 ? "disabled" : "")}
+                  onClick={() => setIdx(Math.min(total - 1, idx + 1))}
+                  disabled={idx === total - 1}
+                  aria-label="Siguiente"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+            <div className="guias-footer">
+              <div className="guias-dots">
+                {slides.map((_, i) => (
+                  <button
+                    key={i}
+                    className={"guias-dot " + (i === idx ? "active" : "")}
+                    onClick={() => setIdx(i)}
+                    aria-label={`Ir al slide ${i + 1}`}
+                  />
+                ))}
+              </div>
+              <div className="guias-counter">
+                {idx + 1} / {total}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   HELPERS
+   ───────────────────────────────────────────────── */
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371; // km
+  const toRad = (d) => d * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2) ** 2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon/2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+/* ─────────────────────────────────────────────────
+   MODAL: Mini mapa de un solo local (estilo Jumbo)
+   ───────────────────────────────────────────────── */
+function StoreMapModal({ rol, store, cityName, onClose, onInscribirme, onShowTarifa }) {
+  const elRef = useRef(null);
+  const mRef  = useRef(null);
+
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
+  useEffect(() => {
+    if (!elRef.current || mRef.current || !window.L) return;
+    if (typeof store.lat !== "number" || typeof store.lng !== "number") return;
+    const L = window.L;
+    const map = L.map(elRef.current, {
+      center: [store.lat, store.lng],
+      zoom: 16,
+      zoomControl: true,
+      scrollWheelZoom: true,
+    });
+    const tileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      subdomains: "abcd",
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a>',
+    });
+    tileLayer.addTo(map);
+
+    const icon = L.divIcon({
+      className: "",
+      iconSize: [48, 58],
+      iconAnchor: [24, 54],
+      html: `<div class="zbl-marker-wrap active"><div class="zbl-marker"><span class="zbl-marker-inner">${ROLES[rol].emoji}</span></div></div>`,
+    });
+    L.marker([store.lat, store.lng], { icon }).addTo(map);
+
+    mRef.current = map;
+    // Invalidate + redraw varias veces para asegurar tiles en mobile
+    [60, 180, 380, 750].forEach(delay => setTimeout(() => {
+      if (!mRef.current) return;
+      mRef.current.invalidateSize({ animate: false });
+      tileLayer.redraw();
+    }, delay));
+
+    return () => {
+      if (mRef.current) { mRef.current.remove(); mRef.current = null; }
+    };
+  }, []);
+
+  return (
+    <div className="overlay store-map-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="store-map-modal">
+        <div className="store-map-head">
+          <div className="store-map-head-text">
+            <div className="store-map-city-tag">📍 {cityName}</div>
+            <div className="store-map-title">{store.name}</div>
+            {store.direccion && <div className="store-map-addr">{store.direccion}</div>}
+          </div>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+        <div ref={elRef} className="store-map-container"></div>
+        <div className="store-map-footer">
+          {store.tarifaLink && (
+            <button
+              className="ver-tarifas-btn"
+              onClick={() => onShowTarifa && onShowTarifa(store.name, store.tarifaLink)}
+            >
+              💰 Ver Tarifas
+            </button>
+          )}
+          <a
+            href={getFormUrl(store.name)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inscribirme-btn store-map-inscribir"
+            onClick={() => onInscribirme(store.name, cityName)}
+          >
+            ✅ Inscribirme en {store.name}
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   FAQ ITEM (accordion)
+   ───────────────────────────────────────────────── */
+function FaqItem({ q, a }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className={"faq-item" + (open ? " open" : "")} onClick={() => setOpen(!open)}>
+      <div className="faq-q">
+        <span>{q}</span>
+        <span className="faq-chev">+</span>
+      </div>
+      <div className="faq-a-wrap">
+        <div className="faq-a">{a}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   FETCH: Videos desde hoja "URL" del Sheet
+   ───────────────────────────────────────────────── */
+function youtubeIdFromUrl(url) {
+  if (!url) return null;
+  const s = String(url).trim();
+  let m = s.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  m = s.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  m = s.match(/\/embed\/([a-zA-Z0-9_-]{11})/);
+  if (m) return m[1];
+  return null;
+}
+
+async function fetchVideosFromSheet() {
+  try {
+    const url = GAS_URL + (GAS_URL.includes("?") ? "&" : "?") + "sheet=URL";
+    const res = await fetch(url);
+    const rows = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0) return [];
+    return rows.map(r => {
+      const kTipo = findKey(r, "tipo", "titulo", "nombre");
+      const kLink = findKey(r, "link", "url", "video");
+      const titulo = kTipo ? String(r[kTipo] || "").trim() : "";
+      const link   = kLink ? String(r[kLink] || "").trim() : "";
+      return { titulo, link, ytId: youtubeIdFromUrl(link) };
+    }).filter(v => v.titulo && v.ytId);
+  } catch (err) {
+    console.warn("[Zubale] Error cargando videos:", err);
+    return [];
+  }
+}
+
+/* ─────────────────────────────────────────────────
+   MODAL: Tarifas de la sala (imagen desde Drive)
+   ───────────────────────────────────────────────── */
+function TarifaModal({ storeName, imageUrl, onClose }) {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
+  return (
+    <div className="overlay tarifa-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="tarifa-modal tarifa-modal-img">
+        <div className="tarifa-modal-head">
+          <div className="tarifa-modal-title">Tarifas — {storeName}</div>
+          <button className="tarifa-close-btn" onClick={onClose} aria-label="Cerrar">×</button>
+        </div>
+        <div className="tarifa-img-wrap">
+          {!loaded && (
+            <div className="tarifa-loading">
+              <div className="geo-spinner"></div>
+              <span>Cargando tarifas...</span>
+            </div>
+          )}
+          <iframe
+            src={imageUrl}
+            className="tarifa-iframe"
+            onLoad={() => setLoaded(true)}
+            style={{ opacity: loaded ? 1 : 0 }}
+            allow="autoplay"
+            sandbox="allow-scripts allow-same-origin"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   MODAL: Búsqueda de salas por ciudad (con mapa real)
+   ───────────────────────────────────────────────── */
+function LocationsModal({ rol, onClose, onInscribirme }) {
+  const [query, setQuery]       = useState("");
+  const [regionIdx, setRegionIdx] = useState(0);
+  const [retailFilter, setRetailFilter] = useState("Todos");
+  const [openStore, setOpenStore] = useState(null);
+  const [tarifaStore, setTarifaStore] = useState(null); // {name, imageUrl}
+  const [selectedStoreIdx, setSelectedStoreIdx] = useState(null);
+  const [storeOnMap, setStoreOnMap] = useState(null); // {store, regionName}
+  const [locating, setLocating] = useState(false);
+
+  /* ─── NUEVO: datos desde Google Sheets ─── */
+  const [sheetRegiones, setSheetRegiones] = useState(null); // null = loading
+  const [sheetError, setSheetError] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchSalasFromSheet()
+      .then(data => { if (!cancelled) setSheetRegiones(data); })
+      .catch(err => { if (!cancelled) { console.error("Sheet fetch error:", err); setSheetError(err.message); setSheetRegiones([]); }});
+    return () => { cancelled = true; };
+  }, []);
+
+  /* Filtrar salas por rol seleccionado */
+  const regionesPorRol = useMemo(() => {
+    if (!sheetRegiones) return [];
+    return sheetRegiones
+      .map(r => ({
+        ...r,
+        salas: r.salas.filter(s => {
+          // Si la sala tiene rol, filtrar. Si no tiene, mostrar en todos.
+          if (!s.rol) return true;
+          return s.rol.toLowerCase() === rol.toLowerCase();
+        }),
+      }))
+      .filter(r => r.salas.length > 0);
+  }, [sheetRegiones, rol]);
+
+  const mapElRef    = useRef(null);
+  const mapRef      = useRef(null);
+  const tileLayerRef = useRef(null);
+  const markersRef  = useRef([]);
+  const popupRefs   = useRef({});
+  const roRef       = useRef(null);
+
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === "Escape") !tarifaStore && onClose(); };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [tarifaStore]);
+
+  /* filtrado por búsqueda + retail */
+  const filteredRegions = useMemo(() => {
+    const q = query.toLowerCase().trim();
+    return regionesPorRol
+      .map(r => ({
+        ...r,
+        salas: r.salas.filter(s => {
+          const matchRetail = retailFilter === "Todos" || getRetail(s.name) === retailFilter;
+          const matchQuery  = !q ||
+            r.nombre.toLowerCase().includes(q) ||
+            s.name.toLowerCase().includes(q) ||
+            (s.direccion || "").toLowerCase().includes(q) ||
+            (s.comuna || "").toLowerCase().includes(q);
+          return matchRetail && matchQuery;
+        }),
+      }))
+      .filter(r => r.salas.length > 0 || (!q && retailFilter === "Todos"));
+  }, [query, retailFilter, regionesPorRol]);
+
+  const activeRegion = filteredRegions[regionIdx] || filteredRegions[0];
+
+  useEffect(() => { setRegionIdx(0); setOpenStore(null); setSelectedStoreIdx(null); }, [query, retailFilter]);
+
+  /* ─── Inicializar el mapa Leaflet al montar (solo si el contenedor está visible y datos cargados) ─── */
+  useEffect(() => {
+    if (!mapElRef.current || mapRef.current || !window.L || !sheetRegiones) return;
+    // En mobile, .map-col tiene display: none — saltamos init para no inicializar con 0x0
+    const rect = mapElRef.current.getBoundingClientRect();
+    if (rect.width < 20 || rect.height < 20) return;
+    const L = window.L;
+    const initial = regionesPorRol[0] || { center: [-33.45, -70.67], zoom: 10 };
+    const map = L.map(mapElRef.current, {
+      center: initial.center,
+      zoom: initial.zoom,
+      zoomControl: true,
+      scrollWheelZoom: true,
+    });
+    // CartoDB Voyager: basemap gratuito sin API key ni Referer, estilo Google Maps.
+    // Nota: sin el sufijo @2x para máxima compatibilidad en mobile.
+    const tileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      subdomains: "abcd",
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a>',
+    });
+    tileLayer.addTo(map);
+    mapRef.current = map;
+    tileLayerRef.current = tileLayer;
+
+    /* Event delegation para botones dentro de popups de Leaflet.
+       Más robusto que asignar .onclick en popupopen, porque no depende
+       del timing de creación del DOM del popup. */
+    const handlePopupBtnClick = (e) => {
+      const tarifaBtn = e.target.closest(".popup-tarifa-btn");
+      if (tarifaBtn) {
+        e.stopPropagation();
+        e.preventDefault();
+        const sName = tarifaBtn.getAttribute("data-store");
+        const sUrl  = tarifaBtn.getAttribute("data-url");
+        if (sName && sUrl) {
+          setTarifaStore({ name: sName, imageUrl: sUrl });
+          if (mapRef.current) mapRef.current.closePopup();
+        }
+        return;
+      }
+    };
+    mapElRef.current.addEventListener("click", handlePopupBtnClick);
+
+    // ResizeObserver: cada vez que el contenedor cambia de tamaño (ej. cuando en mobile
+    // se hace visible el tab "Mapa"), forzamos a Leaflet a recalcular y repintar tiles.
+    if (typeof ResizeObserver !== "undefined") {
+      const ro = new ResizeObserver(() => {
+        if (mapRef.current) mapRef.current.invalidateSize({ animate: false });
+      });
+      ro.observe(mapElRef.current);
+      roRef.current = ro;
+    }
+
+    // Invalidate varias veces al inicio para captar cualquier layout tardío del modal.
+    [50, 150, 350, 700, 1200].forEach(delay => setTimeout(() => {
+      if (mapRef.current) mapRef.current.invalidateSize({ animate: false });
+    }, delay));
+
+    return () => {
+      if (roRef.current) { roRef.current.disconnect(); roRef.current = null; }
+      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; }
+    };
+  }, [sheetRegiones]);
+
+  /* ─── Actualizar marcadores cuando cambia la ciudad ─── */
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !activeRegion || !window.L) return;
+    const L = window.L;
+
+    // limpiar marcadores anteriores
+    markersRef.current.forEach(m => map.removeLayer(m));
+    markersRef.current = [];
+    popupRefs.current = {};
+
+    // mover la vista a la ciudad
+    map.flyTo(activeRegion.center, activeRegion.zoom, { duration: 0.6 });
+
+    // agregar nuevos marcadores
+    activeRegion.salas.forEach((s, i) => {
+      if (typeof s.lat !== "number" || typeof s.lng !== "number") return;
+      const isActive = selectedStoreIdx === i;
+      const icon = L.divIcon({
+        className: "",
+        iconSize: [38, 46],
+        iconAnchor: [19, 42],
+        popupAnchor: [0, -42],
+        html: `<div class="zbl-marker-wrap ${isActive ? "active" : ""}">
+                 <div class="zbl-marker"><span class="zbl-marker-inner">${ROLES[rol].emoji}</span></div>
+               </div>`,
+      });
+      const marker = L.marker([s.lat, s.lng], { icon }).addTo(map);
+
+      // popup HTML — data attrs para el handler
+      const escapedName = s.name.replace(/"/g, "&quot;");
+      const escapedUrl = (s.tarifaLink || "").replace(/"/g, "&quot;");
+      const popupHtml = `
+        <div class="popup-inner">
+          <div class="popup-store-name">${s.name}</div>
+          ${s.direccion ? `<div class="popup-store-addr">${s.direccion}</div>` : ""}
+          ${s.tarifaLink ? `<button class="popup-tarifa-btn" data-store="${escapedName}" data-url="${escapedUrl}" type="button">💰 Ver Tarifas</button>` : ""}
+          <a class="popup-inscribirme" href="${getFormUrl(s.name)}" target="_blank" rel="noopener noreferrer">✅ Inscribirme en esta sala</a>
+        </div>
+      `;
+      marker.bindPopup(popupHtml, { closeButton: true, maxWidth: 260 });
+
+      marker.on("click", () => {
+        setSelectedStoreIdx(i);
+        setOpenStore(i);
+      });
+
+      marker.on("popupopen", (e) => {
+        const el = e.popup.getElement();
+        if (!el) return;
+        const btn = el.querySelector(".popup-inscribirme");
+        if (btn) {
+          btn.onclick = (ev) => {
+            ev.stopPropagation();
+            onInscribirme(s.name, activeRegion.nombre);
+            map.closePopup();
+          };
+        }
+        /* Nota: el click de .popup-tarifa-btn se maneja por event delegation
+           en el contenedor del mapa (ver useEffect de inicialización). */
+      });
+
+      markersRef.current.push(marker);
+      popupRefs.current[i] = marker;
+    });
+
+    // fit bounds si hay varias salas
+    if (activeRegion.salas.length > 1) {
+      const bounds = L.latLngBounds(activeRegion.salas.map(s => [s.lat, s.lng]));
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
+    }
+  }, [regionIdx, query, retailFilter, activeRegion?.nombre]);
+
+  /* ─── Cuando se selecciona una sala desde la lista, abrir popup en el mapa ─── */
+  useEffect(() => {
+    if (selectedStoreIdx == null) return;
+    const marker = popupRefs.current[selectedStoreIdx];
+    if (marker && mapRef.current) {
+      mapRef.current.flyTo(marker.getLatLng(), Math.max(mapRef.current.getZoom(), 14), { duration: 0.5 });
+      setTimeout(() => marker.openPopup(), 500);
+    }
+  }, [selectedStoreIdx]);
+
+  /* ─── Geolocalización real ("Usar mi ubicación") ─── */
+  const handleGeolocate = () => {
+    if (!navigator.geolocation) {
+      alert("Tu navegador no soporta geolocalización.");
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLocating(false);
+        const { latitude, longitude } = pos.coords;
+        const pool = (filteredRegions && filteredRegions.length > 0) ? filteredRegions : regionesPorRol;
+        let best = { regionIdx: 0, storeIdx: 0, dist: Infinity, city: null, store: null };
+        pool.forEach((city, ci) => {
+          city.salas.forEach((sala, si) => {
+            if (typeof sala.lat !== "number" || typeof sala.lng !== "number") return;
+            const d = haversine(latitude, longitude, sala.lat, sala.lng);
+            if (d < best.dist) {
+              best = { regionIdx: ci, storeIdx: si, dist: d, city, store: sala };
+            }
+          });
+        });
+        if (best.store) {
+          setRegionIdx(best.regionIdx);
+          setOpenStore(best.storeIdx);
+          setSelectedStoreIdx(best.storeIdx);
+          // Abrir el mini-mapa del local más cercano
+          setStoreOnMap({ store: best.store, cityName: best.city.nombre });
+        } else {
+          alert("No encontramos salas cerca de tu ubicación.");
+        }
+      },
+      (err) => {
+        setLocating(false);
+        let msg = "No pudimos obtener tu ubicación.";
+        if (err.code === 1) msg = "Necesitamos tu permiso de ubicación. Actívalo desde los ajustes del navegador.";
+        if (err.code === 2) msg = "Ubicación no disponible en este momento. Intenta de nuevo.";
+        if (err.code === 3) msg = "La solicitud tardó demasiado. Intenta de nuevo.";
+        alert(msg);
+      },
+      { timeout: 12000, enableHighAccuracy: true, maximumAge: 60000 }
+    );
+  };
+
+  const handleSelectStore = (idx) => {
+    setOpenStore(openStore === idx ? null : idx);
+    setSelectedStoreIdx(idx);
+  };
+
+  return (
+    <>
+      <div className="overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+        <div className="modal-locations">
+          <div className="modal-head">
+            <div>
+              <h2>Descubre dónde puedes ser {rol}</h2>
+              <p>Busca tu región o comuna, explora el mapa y elige la sala disponible más cercana a ti.</p>
+            </div>
+            <button className="modal-close" onClick={onClose}>×</button>
+          </div>
+
+          <div className="modal-search-row">
+            <div className="search-wrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input
+                placeholder="Busca por nombre de local o dirección"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
+            <button className="btn-geo" onClick={handleGeolocate} disabled={locating}>
+              {locating ? (
+                <>
+                  <span className="geo-spinner"></span>
+                  Buscando...
+                </>
+              ) : (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.5 8 12 8 12s8-6.5 8-12a8 8 0 0 0-8-8z"/>
+                  </svg>
+                  Usar mi ubicación
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* MOBILE ONLY: horizontal city chips */}
+          {/* Mobile: dropdown filters for Region + Retail */}
+          <div className="mobile-filters-row">
+            <div className="mobile-filter-group">
+              <span className="mobile-filter-label">Región</span>
+              <select
+                className="mobile-filter-select"
+                value={regionIdx}
+                onChange={(e) => { setRegionIdx(Number(e.target.value)); setOpenStore(null); setSelectedStoreIdx(null); }}
+              >
+                {filteredRegions.map((r, i) => (
+                  <option key={r.nombre} value={i}>
+                    {r.nombre} ({r.salas.length})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mobile-filter-group">
+              <span className="mobile-filter-label">Retail</span>
+              <select
+                className="mobile-filter-select"
+                value={retailFilter}
+                onChange={(e) => setRetailFilter(e.target.value)}
+              >
+                {RETAILS.map(r => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* LOADING STATE */}
+          {sheetRegiones === null && (
+            <div className="sheet-loading">
+              <div className="geo-spinner" style={{width:"28px",height:"28px",borderWidth:"3px"}}></div>
+              <span>Cargando salas disponibles...</span>
+            </div>
+          )}
+          {sheetError && (
+            <div className="sheet-error">
+              <span>⚠️ No se pudieron cargar las salas. Verifica que el Sheet sea público.</span>
+            </div>
+          )}
+
+          <div className="modal-body" style={{ display: sheetRegiones === null ? "none" : undefined }}>
+            <div className="cities-col">
+              <div className="cities-title">Regiones</div>
+              {filteredRegions.length === 0 ? (
+                <div className="empty" style={{ padding: "24px 10px" }}>
+                  <div className="empty-icon">🔍</div>
+                  <div className="empty-title">Sin resultados</div>
+                  <div className="empty-text">Prueba con otra búsqueda.</div>
+                </div>
+              ) : (
+                filteredRegions.map((c, i) => (
+                  <div
+                    key={c.nombre}
+                    className={"city-item " + (i === regionIdx ? "active" : "")}
+                    onClick={() => { setRegionIdx(i); setOpenStore(null); setSelectedStoreIdx(null); }}
+                  >
+                    <span>📍 {c.nombre}</span>
+                    <span className="city-count">{c.salas.length}</span>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="stores-col">
+              {activeRegion ? (
+                <>
+                  <div className="stores-head">
+                    <h3>Salas en {activeRegion.nombre}</h3>
+                  </div>
+                  <div className="retail-filter-row">
+                    <label className="retail-filter-label">Retail:</label>
+                    <select
+                      className="retail-filter-select"
+                      value={retailFilter}
+                      onChange={(e) => setRetailFilter(e.target.value)}
+                    >
+                      {RETAILS.map(r => (
+                        <option key={r} value={r}>{r}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {activeRegion.salas.length === 0 ? (
+                    <div className="empty">
+                      <div className="empty-icon">😕</div>
+                      <div className="empty-title">No encontramos salas</div>
+                      <div className="empty-text">Intenta con otra ciudad o comuna.</div>
+                    </div>
+                  ) : (
+                    activeRegion.salas.map((s, i) => {
+                      const isOpen = openStore === i;
+                      const isSelected = selectedStoreIdx === i;
+                      return (
+                        <div
+                          className={"store-row fade-in " + (isSelected ? "selected" : "")}
+                          key={s.name}
+                          style={{ animationDelay: (i * 0.04) + "s", cursor: "pointer" }}
+                          onClick={() => handleSelectStore(i)}
+                        >
+                          <div className="store-row-top">
+                            <div className="store-row-icon">{ROLES[rol].emoji}</div>
+                            <div className="store-row-main">
+                              <div className="store-row-name">
+                                {s.name}
+                              </div>
+                              {s.direccion && <div className="store-row-addr">{s.direccion}</div>}
+                              <button
+                                className="store-row-maplink"
+                                onClick={(e) => { e.stopPropagation(); setStoreOnMap({ store: s, cityName: activeRegion.nombre }); }}
+                              >
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                Ver en mapa
+                              </button>
+                            </div>
+                            <button
+                              className={"store-row-toggle " + (isOpen ? "open" : "")}
+                              onClick={(e) => { e.stopPropagation(); handleSelectStore(i); }}
+                            >
+                              Más info
+                              <span className="chev">▾</span>
+                            </button>
+                          </div>
+                          <div className={"store-row-expand " + (isOpen ? "open" : "")}>
+                            <div className="store-row-actions">
+                              {s.tarifaLink && (
+                                <button
+                                  className="ver-tarifas-btn"
+                                  onClick={(e) => { e.stopPropagation(); setTarifaStore({ name: s.name, imageUrl: s.tarifaLink }); }}
+                                >
+                                  💰 Ver Tarifas
+                                </button>
+                              )}
+                              <a
+                                href={getFormUrl(s.name)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inscribirme-btn"
+                                onClick={() => onInscribirme(s.name, activeRegion.nombre)}
+                              >
+                                ✅ Inscribirme en {s.name}
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </>
+              ) : (
+                <div className="empty">
+                  <div className="empty-icon">🏪</div>
+                  <div className="empty-title">Selecciona una ciudad</div>
+                  <div className="empty-text">Escoge una ciudad del listado de la izquierda.</div>
+                </div>
+              )}
+            </div>
+
+            <div className="map-col">
+              <div ref={mapElRef} style={{ width: "100%", height: "100%" }}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {tarifaStore && (
+        <TarifaModal
+          storeName={tarifaStore.name}
+          imageUrl={tarifaStore.imageUrl}
+          onClose={() => setTarifaStore(null)}
+        />
+      )}
+
+      {storeOnMap && (
+        <StoreMapModal
+          rol={rol}
+          store={storeOnMap.store}
+          cityName={storeOnMap.cityName}
+          onClose={() => setStoreOnMap(null)}
+          onInscribirme={(name, city) => {
+            setStoreOnMap(null);
+            onInscribirme(name, city);
+          }}
+          onShowTarifa={(name, imageUrl) => setTarifaStore({ name, imageUrl })}
+        />
+      )}
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   APP
+   ───────────────────────────────────────────────── */
+function App() {
+  const [rol, setRol] = useState("Picker");
+  const [showLocations, setShowLocations] = useState(false);
+  const [showGuias, setShowGuias] = useState(false);
+  const [sheetVideos, setSheetVideos] = useState([]);
+  const [playingVideo, setPlayingVideo] = useState(null);
+  const data = ROLES[rol];
+
+  useEffect(() => {
+    fetchVideosFromSheet().then(vids => {
+      if (vids.length) setSheetVideos(vids);
+    });
+  }, []);
+
+  const handleInscribirme = (storeName, cityName) => {
+    setShowLocations(false);
+  };
+
+  return (
+    <>
+      <Header />
+
+      {/* HERO */}
+      <section className="hero">
+        <div className="hero-inner">
+          <h1>Únete a Zubale y empieza a ganar HOY</h1>
+          <p>Selecciona tu rol para descubrir cómo puedes comenzar a generar ganancias siendo un Zubalero.</p>
+          <div className="role-pills" role="tablist">
+            {Object.values(ROLES).map((r) => (
+              <button
+                key={r.key}
+                className={"role-pill " + (rol === r.key ? "active" : "")}
+                onClick={() => setRol(r.key)}
+              >
+                {r.key}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CONTENT SPLIT */}
+      <main className="main">
+        <div className="split-wrap" key={rol /* force re-mount for animation */}>
+
+          {/* LEFT: 3 info cards */}
+          <div className="info-grid">
+
+            <div className="info-card fade-in stagger-1">
+              <div className="info-card-head">
+                <div className="info-card-icon">💡</div>
+                <div className="info-card-title">¿Qué es un {rol}?</div>
+              </div>
+              <p>{data.descripcion}</p>
+            </div>
+
+            <div className="info-card fade-in stagger-2">
+              <div className="info-card-head">
+                <div className="info-card-icon">📋</div>
+                <div className="info-card-title">¿Qué necesitas para ser {rol}?</div>
+              </div>
+              <ul>
+                {data.requisitos.map((req, i) => (
+                  <li key={i}>{req}</li>
+                ))}
+              </ul>
+            </div>
+
+            {data.vehiculos ? (
+              data.vehiculos.map((veh, vi) => (
+                <div className={`info-card fade-in stagger-${3 + vi}`} key={veh.nombre}>
+                  <div className="info-card-head">
+                    <div className="info-card-icon">{veh.emoji}</div>
+                    <div className="info-card-title">¿Cuánto gana un {rol} {veh.nombre}?</div>
+                  </div>
+                  {veh.ganancias.map((g, i) => (
+                    <div className="earn-row" key={i}>
+                      <span className="earn-label">{g.label}</span>
+                      <span className="earn-value">{g.value}</span>
+                    </div>
+                  ))}
+                  <div className="earn-note">*Valores referenciales, calculados en base al promedio de ganancias.</div>
+                  <div className="earn-note">*Montos brutos.</div>
+                </div>
+              ))
+            ) : (
+              <div className="info-card fade-in stagger-3">
+                <div className="info-card-head">
+                  <div className="info-card-icon">💰</div>
+                  <div className="info-card-title">¿Cuánto gana un {rol}?</div>
+                </div>
+                {data.ganancias.map((g, i) => (
+                  <div className="earn-row" key={i}>
+                    <span className="earn-label">{g.label}</span>
+                    <span className="earn-value">{g.value}</span>
+                  </div>
+                ))}
+                <div className="earn-note">*Valores referenciales, calculados en base al promedio de ganancias.</div>
+                <div className="earn-note">*Montos brutos.</div>
+              </div>
+            )}
+
+            {/* Card Guías → abre la guía oficial en un modal */}
+            <div
+              className="guias-card fade-in stagger-4"
+              onClick={() => setShowGuias(true)}
+            >
+              <div className="guias-card-bg"></div>
+              <div className="guias-card-content">
+                <div className="guias-card-head">
+                  <div className="guias-card-icon">📚</div>
+                  <div>
+                    <div className="guias-card-tag">Guía oficial</div>
+                    <div className="guias-card-title">Guía del Buen {rol === "Picker" ? "Zubalero" : rol}</div>
+                  </div>
+                </div>
+                <div className="guias-card-sub">
+                  Aprende los tips, protocolos y mejores prácticas para destacar como {rol} desde el día uno.
+                </div>
+                <button className="guias-card-btn" onClick={(e) => { e.stopPropagation(); setShowGuias(true); }}>
+                  <span>🚀 Ver la guía</span>
+                  <span>→</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          {/* RIGHT: Locations card + FAQs */}
+          <div className="right-col">
+            <div className="locations-card fade-in stagger-1" onClick={() => setShowLocations(true)}>
+              <div>
+                <div className="loc-tag">📍 Ubicaciones</div>
+                <div className="loc-title">Dónde puedes ser {rol}</div>
+                <div className="loc-sub">
+                  Explora las ciudades y salas en las que Zubale tiene cupos abiertos para {rol}s ahora mismo.
+                </div>
+                <div className="loc-mini-list">
+                  <div className="loc-mini"><span className="loc-mini-dot"></span> Disponibilidad en diferentes partes del país</div>
+                  <div className="loc-mini"><span className="loc-mini-dot"></span> Tarifas específicas por sala</div>
+                </div>
+              </div>
+              <button className="loc-cta" onClick={(e) => { e.stopPropagation(); setShowLocations(true); }}>
+                <span className="loc-cta-icon">🔍</span>
+                Ver salas disponibles
+                <span style={{ marginLeft: "auto" }}>→</span>
+              </button>
+            </div>
+
+            {data.faqs && (
+              <div className="faqs-card fade-in stagger-2">
+                <div className="faqs-head">
+                  <div className="faqs-icon">?</div>
+                  <div>
+                    <div className="faqs-title">Preguntas frecuentes</div>
+                    <div className="faqs-sub">Todo lo que necesitas saber sobre ser {rol}</div>
+                  </div>
+                </div>
+                {data.faqs.map((f, i) => (
+                  <FaqItem key={rol + "-" + i} q={f.q} a={f.a} />
+                ))}
+              </div>
+            )}
+
+            {/* Video de capacitación — primer video de hoja "URL" del Sheet */}
+            {sheetVideos.length > 0 ? (() => {
+              const vid = sheetVideos[0];
+              return (
+                <div className="video-card fade-in stagger-3">
+                  <div className="video-card-head">
+                    <div className="video-card-icon">▶</div>
+                    <div>
+                      <div className="video-card-title">{vid.titulo}</div>
+                      <div className="video-card-sub">Mira el video y prepárate para empezar</div>
+                    </div>
+                  </div>
+                  <div className="video-thumb-link" onClick={() => {
+                    if (window.location.protocol === "file:") {
+                      window.open(vid.link, "_blank");
+                    } else {
+                      setPlayingVideo(vid);
+                    }
+                  }}>
+                    <img
+                      src={`https://img.youtube.com/vi/${vid.ytId}/hqdefault.jpg`}
+                      alt={vid.titulo}
+                      className="video-thumb-img"
+                    />
+                    <div className="video-thumb-play">▶</div>
+                  </div>
+                </div>
+              );
+            })() : (
+              <div className="video-card fade-in stagger-3">
+                <div className="video-card-head">
+                  <div className="video-card-icon">▶</div>
+                  <div>
+                    <div className="video-card-title">Video: ¿Cómo ser un buen {rol}?</div>
+                    <div className="video-card-sub">Mira el video y prepárate para empezar</div>
+                  </div>
+                </div>
+                <div className="video-embed">
+                  <div className="video-placeholder">
+                    <div className="video-placeholder-icon">▶</div>
+                    <div className="video-placeholder-text">Cargando...</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+        </div>
+
+        {/* FINAL CTA */}
+        <div className="final-cta-wrap">
+          <h3>¿Listo para empezar como {rol}?</h3>
+          <p>Postula en segundos y recibe los próximos pasos por WhatsApp para comenzar a generar ganancias esta misma semana.</p>
+          <div className="final-cta-buttons">
+            <a className="btn-primary" href="https://www.zubalero.com/cl/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", textAlign: "center" }}>
+              Postula Con Zubale
+            </a>
+          </div>
+        </div>
+
+        {/* APP DOWNLOAD BANNER — compacto, al final */}
+        <section className="app-banner fade-in" aria-label="Descarga la app de Zubale">
+          <div className="app-banner-img-link">
+            <img
+              src="https://www.zubalero.com/cl/wp-content/uploads/2023/11/banner_website_baixeoapp-spanish.png"
+              alt="Descarga la app Zubale y empieza hoy mismo"
+              className="app-banner-img"
+              loading="lazy"
+            />
+          </div>
+          <div className="app-banner-stores">
+            <a
+              href="https://play.google.com/store/apps/details?id=mx.com.topup&pcampaignid=web_share"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="app-banner-store-link"
+              aria-label="Descargar en Google Play"
+            >
+              <img
+                src="https://mxb2c.zubale.com/wp-content/uploads/2023/10/google-play-esp-1.png"
+                alt="Disponible en Google Play"
+                className="app-banner-store-img"
+                loading="lazy"
+              />
+            </a>
+            <a
+              href="https://apps.apple.com/cl/app/zubale/id1403846238"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="app-banner-store-link"
+              aria-label="Descargar en App Store"
+            >
+              <img
+                src="https://mxb2c.zubale.com/wp-content/uploads/2023/10/app-store-esp-1.png"
+                alt="Descárgala en App Store"
+                className="app-banner-store-img"
+                loading="lazy"
+              />
+            </a>
+          </div>
+        </section>
+      </main>
+
+      {showGuias && (
+        <GuiasModal
+          rol={rol}
+          onClose={() => setShowGuias(false)}
+        />
+      )}
+
+      {showLocations && (
+        <LocationsModal
+          rol={rol}
+          onClose={() => setShowLocations(false)}
+          onInscribirme={handleInscribirme}
+        />
+      )}
+
+      {playingVideo && (
+        <div className="overlay video-overlay" onClick={(e) => e.target === e.currentTarget && setPlayingVideo(null)}>
+          <div className="video-modal">
+            <div className="video-modal-head">
+              <div className="video-modal-title">{playingVideo.titulo}</div>
+              <button className="tarifa-close-btn" onClick={() => setPlayingVideo(null)} aria-label="Cerrar">×</button>
+            </div>
+            <div className="video-modal-body">
+              <iframe
+                src={`https://www.youtube.com/embed/${playingVideo.ytId}?autoplay=1`}
+                title={playingVideo.titulo}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <footer className="footer">© 2026 Zubale · Todos los derechos reservados</footer>
+
+      <ChatBot />
+    </>
+  );
+}
+
+/* ─────────────────────────────────────────────────
+   CHATBOT WIDGET (Groq + Llama 3.3 70B)
+   ───────────────────────────────────────────────── */
+// API key se maneja via serverless function en Vercel (/api/chat)
+// Para desarrollo local, pega tu key aquí temporalmente:
+const GROQ_API_KEY = "";
+
+const CHATBOT_SYSTEM_PROMPT = `Eres "Zubalin", el asistente virtual de Zubale Chile. Tu único propósito es ayudar a personas interesadas en trabajar como Zubaleros (Picker, Shopper o Driver) en Chile.
+
+REGLAS ESTRICTAS (CUMPLIR SIEMPRE):
+1. SOLO responde preguntas sobre Zubale: roles, requisitos, ganancias, postulación y ubicaciones.
+2. Si preguntan algo fuera de tema, responde: "¡Hola! Soy Zubalin 🧡 Solo puedo ayudarte con información sobre cómo trabajar con nosotros como Picker, Shopper o Driver. ¿En qué te puedo ayudar?"
+3. Responde en español chileno, amigable, breve y claro.
+4. NUNCA inventes información. Usa SOLO los datos de abajo. Si no encuentras la respuesta, di: "No tengo esa información. Te sugiero revisar nuestra página o contactar a soporte."
+5. NO agregues pasos, requisitos ni condiciones que no estén listados aquí.
+6. NO uses frases genéricas inventadas.
+
+FORMATO DE RESPUESTAS (MUY IMPORTANTE — SEGUIR AL PIE DE LA LETRA):
+- SIEMPRE usa viñetas con "•" para listas de requisitos, ganancias, pasos, etc. NUNCA escribas listas en una sola oración separada por comas.
+- Usa **negritas** para datos clave.
+- Separa secciones con saltos de línea.
+- Cuando menciones una sala, SIEMPRE incluye su link markdown: [Nombre](URL).
+- Máximo 3-4 líneas por punto.
+- Un emoji por respuesta máximo.
+
+EJEMPLO DE RESPUESTA IDEAL (cuando preguntan por un rol):
+"🛍️ Para ser **Shopper** necesitas:
+
+• Teléfono Android
+• Vehículo (auto, moto o bici)
+• Licencia de conducir vigente (auto/moto)
+• Mayor de edad
+• Cédula al día
+• Iniciación de actividades en SII
+
+**Ganancias** (dependen del vehículo):
+• Auto: **$5.500~$7.500/hora**
+• Moto: **$4.500~$6.500/hora**
+• Bici: **$3.500~$5.000/hora**
+
+Postula ahora en una de nuestras salas:
+• [Postular a Lider Quilicura](URL)
+• [Postular a Lider Cordillera](URL)"
+
+SIGUE SIEMPRE ESTE FORMATO. Los requisitos van en viñetas separadas, NUNCA en un párrafo corrido.
+
+REGLA CLAVE DE POSTULACIÓN:
+- SIEMPRE que el usuario muestre interés en un rol o pregunte cómo postular, TERMINA tu respuesta con los links de inscripción.
+- Esto es OBLIGATORIO. No termines una respuesta sobre un rol sin incluir los links.
+
+REGLA DE INTERACTIVIDAD (MUY IMPORTANTE):
+- Sé CONVERSACIONAL, no genérico. Haz preguntas de vuelta para entender qué necesita el usuario.
+- Si el usuario dice algo vago como "quiero postular", "me interesa", "quiero trabajar", NO des un resumen de los 3 roles. Pregúntale: "¡Genial! 🧡 Tenemos 3 roles disponibles: **Picker** (armar pedidos en tienda), **Shopper** (comprar y entregar) y **Driver** (solo entregar). ¿Cuál te interesa más?"
+- Si ya sabes el rol que le interesa, pregúntale si quiere saber sobre ganancias, requisitos o postular directamente.
+- Siempre guía la conversación hacia el siguiente paso.
+
+GUÍAS Y CAPACITACIÓN:
+- Tenemos una "Guía del Buen Zubalero" disponible en la página principal (sección de cada rol).
+- Si el usuario pregunta cómo ser buen Picker/Shopper/Driver, o pide tips/consejos, responde con los tips que tengas en contexto y dile: "También puedes revisar nuestra **Guía del Buen Zubalero** en la sección del rol en nuestra página. Pronto tendremos videos de capacitación disponibles."
+- NO inventes tips ni consejos que no estén en el contexto.
+
+CONTEXTO DE ZUBALE CHILE:
+
+**PICKER** 🛒
+Selecciona, ordena y empaqueta productos en tienda, dejando el pedido listo para entrega.
+• Requisitos: Teléfono Android, mayor de edad, cédula al día, Iniciación de actividades en SII.
+• Ganancias: **$2.800~$3.500/hora** | **$25.200~$31.500/día** | **$126.000~$157.500/semana**
+• Tarifas: Hora regular $5.000, Hora punta $6.500, Bono productividad +$15.000, Express +$1.200
+• Inicio: Menos de 24 horas tras completar registro y capacitación.
+• No requiere experiencia previa.
+
+**SHOPPER** 🛍️
+Compra en tienda y entrega al domicilio del cliente (auto, moto o bici).
+• Requisitos: Teléfono Android, vehículo, licencia vigente (auto/moto), mayor de edad, cédula al día, Iniciación SII.
+• Ganancias Auto: **$5.500~$7.500/hora** | **$49.500~$67.500/día** | **$247.500~$337.500/semana** | **$990.000~$1.350.000/mes**
+• Ganancias Moto: **$4.500~$6.500/hora** | **$40.500~$58.500/día** | **$202.500~$292.500/semana** | **$810.000~$1.170.000/mes**
+• Ganancias Bici: **$3.500~$5.000/hora** | **$31.500~$45.000/día** | **$157.500~$225.000/semana** | **$630.000~$900.000/mes**
+• Tarifas: Hora regular $7.000, Hora punta $9.000, Bono entrega +$2.500, Bono km +$450/km.
+
+**DRIVER** 🚙
+Retira pedido listo en tienda y lo lleva al domicilio del cliente.
+• Requisitos: Vehículo, documentación al día, teléfono Android, mayor de edad, cédula al día, Iniciación SII.
+• Ganancias Auto: **$5.000~$7.000/hora** | **$45.000~$63.000/día** | **$225.000~$315.000/semana** | **$900.000~$1.260.000/mes**
+• Ganancias Moto: **$4.200~$6.000/hora** | **$37.800~$54.000/día** | **$189.000~$270.000/semana** | **$756.000~$1.080.000/mes**
+• Ganancias Bici: **$3.200~$4.800/hora** | **$28.800~$43.200/día** | **$144.000~$216.000/semana** | **$576.000~$864.000/mes**
+• Tarifas: Base entrega $2.200, Bono km +$550/km, Express +$1.800, Horario punta +20%.
+
+SALAS DISPONIBLES (con links de inscripción):
+• **Lider Quilicura** — Av. Ohiggins 314, Quilicura → Inscríbete aquí: [Postular a Lider Quilicura](https://docs.google.com/forms/d/e/1FAIpQLSfuVAAIat0F9nPEFrdLGoVpcKUcmJRVOfP6sh0tD8JqQBIqPA/viewform)
+• **Lider Cordillera** — Av. Los Toros 05441, Puente Alto → Inscríbete aquí: [Postular a Lider Cordillera](https://docs.google.com/forms/d/e/1FAIpQLSeRQ8CaekK0aD3HTmdnWVViYCyxSyEp4X4gtj2tm-FIiJ2_Zw/viewform)
+
+PROCESO DE POSTULACIÓN:
+1. Elige tu rol (Picker, Shopper o Driver)
+2. Revisa los requisitos
+3. Haz clic en "Inscribirme" en la sala que te interese
+4. Completa el formulario
+5. Te contactaremos por WhatsApp con los próximos pasos
+
+DATOS GENERALES:
+• Montos brutos y referenciales.
+• Pagos semanales (día depende de la sala).
+• Tú eliges tus horarios y turnos.
+• Iniciación de actividades en SII es obligatoria.
+
+PREGUNTAS FRECUENTES (FAQ):
+
+Picker:
+P: ¿Cuánto tardo en empezar como Picker?
+R: Menos de 24 horas tras completar registro y capacitación.
+P: ¿Cómo y cuándo recibo mis pagos?
+R: Pagos semanales. El día depende de la sala.
+P: ¿Necesito experiencia previa?
+R: No. En sala te harán una inducción.
+P: ¿Puedo elegir mis horarios?
+R: Sí, eliges turnos según cupos disponibles.
+P: ¿Qué es el Bundle de Conectividad?
+R: Es el monto mínimo que puedes ganar en sala cumpliendo requisitos.
+
+Shopper:
+P: ¿Cuánto tardo en empezar como Shopper?
+R: Menos de 24 horas tras capacitación y verificación de documentos del vehículo.
+P: ¿Cómo y cuándo recibo mis pagos?
+R: Pagos semanales. El día depende de la sala.
+P: ¿Puedo elegir mis horarios?
+R: Sí, eliges los turnos que más te acomoden según cupos.
+P: ¿Qué pasa si no tengo licencia al día?
+R: La licencia vigente es obligatoria para auto/moto. Puedes operar en bicicleta sin licencia.
+
+Driver:
+P: ¿Cómo y cuándo recibo mis pagos?
+R: Pagos semanales. El día depende de la sala.
+P: ¿Puedo elegir mis horarios y zonas?
+R: Sí, eliges turnos y zonas según cupos disponibles.
+
+${typeof CHATBOT_FAQ_EXTRA === "string" ? "CONTEXTO ADICIONAL (FAQ EXTRA):\\n" + CHATBOT_FAQ_EXTRA : ""}`;
+
+/* ── Formatea markdown ligero a HTML para mensajes del bot ── */
+function formatBotMessage(text) {
+  let html = text
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/(?<!href=")(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+
+  const lines = html.split("\n");
+  const result = [];
+  let inList = false;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const isBullet = /^[•\-]\s/.test(trimmed);
+    if (isBullet) {
+      if (!inList) { result.push("<ul>"); inList = true; }
+      result.push("<li>" + trimmed.replace(/^[•\-]\s*/, "") + "</li>");
+    } else {
+      if (inList) { result.push("</ul>"); inList = false; }
+      if (trimmed === "") {
+        result.push("");
+      } else {
+        result.push("<p>" + trimmed + "</p>");
+      }
+    }
+  }
+  if (inList) result.push("</ul>");
+  return result.filter(l => l !== "").join("");
+}
+
+function ChatBot() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { role: "bot", text: "¡Hola! Soy Zubalin 🧡 Tu asistente de Zubale Chile. ¿En qué te puedo ayudar? Puedo contarte sobre nuestros roles, ganancias, requisitos o cómo postular." }
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  useEffect(() => {
+    if (!loading && isOpen) {
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
+  }, [loading, isOpen]);
+
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text || loading) return;
+
+    const userMsg = { role: "user", text };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const apiMessages = [
+        { role: "system", content: CHATBOT_SYSTEM_PROMPT },
+        ...newMessages
+          .filter((m, i) => !(i === 0 && m.role === "bot"))
+          .map(m => ({
+            role: m.role === "bot" ? "assistant" : "user",
+            content: m.text,
+          })),
+      ];
+
+      // Si hay API key local, llamar directo a Groq; si no, usar proxy de Vercel
+      const useProxy = !GROQ_API_KEY;
+      const fetchUrl = useProxy ? "/api/chat" : "https://api.groq.com/openai/v1/chat/completions";
+      const fetchHeaders = { "Content-Type": "application/json" };
+      if (!useProxy) fetchHeaders["Authorization"] = "Bearer " + GROQ_API_KEY;
+
+      const res = await fetch(fetchUrl, {
+        method: "POST",
+        headers: fetchHeaders,
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: apiMessages,
+          temperature: 0.3,
+          max_tokens: 500,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message || "Error de API");
+
+      const botText = data?.choices?.[0]?.message?.content
+        || "Lo siento, no pude procesar tu consulta. Intenta de nuevo.";
+      setMessages(prev => [...prev, { role: "bot", text: botText }]);
+    } catch (err) {
+      console.error("Chatbot error:", err);
+      setMessages(prev => [...prev, {
+        role: "bot",
+        text: "⚠️ Error: " + (err.message || "Hubo un error de conexión. Verifica tu API key e intenta de nuevo."),
+      }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  return (
+    <>
+      {isOpen && (
+        <div className="chat-window">
+          <div className="chat-header">
+            <div className="chat-header-avatar">🤖</div>
+            <div className="chat-header-info">
+              <div className="chat-header-name">Zubalin · Asistente Zubale</div>
+              <div className="chat-header-status">En línea</div>
+            </div>
+            <button className="chat-header-close" onClick={() => setIsOpen(false)}>×</button>
+          </div>
+          <div className="chat-messages">
+            {messages.map((m, i) => (
+              m.role === "bot"
+                ? <div key={i} className="chat-msg bot" dangerouslySetInnerHTML={{ __html: formatBotMessage(m.text) }} />
+                : <div key={i} className="chat-msg user">{m.text}</div>
+            ))}
+            {loading && (
+              <div className="chat-msg typing">
+                <div className="typing-dot"></div>
+                <div className="typing-dot"></div>
+                <div className="typing-dot"></div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="chat-input-row">
+            <input
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Escribe tu pregunta..."
+              disabled={loading}
+              autoFocus
+            />
+            <button
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => { sendMessage(); inputRef.current?.focus(); }}
+              disabled={loading || !input.trim()}
+            >➤</button>
+          </div>
+        </div>
+      )}
+      <button
+        className={"chat-fab" + (isOpen ? " open" : "")}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? "Cerrar chat" : "Abrir chat de ayuda"}
+      >
+        {isOpen ? "×" : "💬"}
+      </button>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
