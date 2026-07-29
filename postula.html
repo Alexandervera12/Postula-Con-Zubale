@@ -2608,10 +2608,8 @@ function getRetail(name) {
 /* ─────────────────────────────────────────────────
    GOOGLE APPS SCRIPT — fuente de datos de salas
    ───────────────────────────────────────────────── */
-// ⬇️ PEGA AQUÍ TU URL de Google Apps Script (ver google-apps-script.js) ⬇️
 const GAS_URL = "https://script.google.com/macros/s/AKfycbyznjxIn99mewSPEBf3rEMMsI_7mGneJo5rf3HT9gk_HhdKweUSM0m5vSgVHKKkN3gE/exec";
 
-/* Extrae el file ID de un link de Drive y devuelve la URL de preview (funciona en iframe) */
 function driveToPreviewUrl(link) {
   if (!link) return null;
   const s = String(link).trim();
@@ -2624,7 +2622,6 @@ function driveToPreviewUrl(link) {
   return null;
 }
 
-/* Extrae file ID de Drive y devuelve URL directa de imagen en alta calidad */
 function driveToDirectImageUrl(link) {
   if (!link) return null;
   const s = String(link).trim();
@@ -2636,7 +2633,6 @@ function driveToDirectImageUrl(link) {
   return null;
 }
 
-/* Centros aproximados por región (para centrar el mapa) */
 const REGION_CENTERS = {
   "metropolitana": { center: [-33.45, -70.67], zoom: 11 },
   "valparaiso": { center: [-33.03, -71.56], zoom: 10 },
@@ -2672,7 +2668,6 @@ function getRegionCenter(regionName) {
   return { center: [-33.45, -70.67], zoom: 10 };
 }
 
-/* Encuentra la key del header que contenga el substring (case-insensitive) */
 function findKey(obj, ...needles) {
   const keys = Object.keys(obj);
   for (const needle of needles) {
@@ -2682,7 +2677,6 @@ function findKey(obj, ...needles) {
   return null;
 }
 
-/* Fetch desde Google Apps Script → estructura REGIONES agrupada por región */
 async function fetchSalasFromSheet() {
   const url = GAS_URL + (GAS_URL.includes("?") ? "&" : "?") + "sheet=Panel";
   const res = await fetch(url);
@@ -2690,7 +2684,6 @@ async function fetchSalasFromSheet() {
 
   if (!Array.isArray(rows) || rows.length === 0) return [];
 
-  // Detectar nombres de columnas (flexibles)
   const sample = rows[0];
   const allKeys = Object.keys(sample);
   console.log("[Zubale] Columnas del Sheet:", allKeys);
@@ -2707,7 +2700,6 @@ async function fetchSalasFromSheet() {
   const kDireccion = findKey(sample, "direcc", "address");
   const kTarifa    = findKey(sample, "tarifa", "drive");
 
-  // Si no encontró la columna de tarifa, probar con la última columna
   const kTarifaFinal = kTarifa || allKeys[allKeys.length - 1];
   console.log("[Zubale] Columna tarifa detectada:", kTarifa, "→ usando:", kTarifaFinal);
 
@@ -2719,11 +2711,9 @@ async function fetchSalasFromSheet() {
     const name = String(r[kTienda] || "").trim();
     if (!name) continue;
 
-    // GAS devuelve números nativos — no hay problema de coma/punto
     const lat = typeof r[kLat] === "number" ? r[kLat] : parseFloat(String(r[kLat]).replace(/,/g, ".")) || 0;
     const lng = typeof r[kLng] === "number" ? r[kLng] : parseFloat(String(r[kLng]).replace(/,/g, ".")) || 0;
 
-    // Obtener tarifa — puede venir como string URL o como otro tipo
     const rawTarifa = r[kTarifaFinal];
     const tarifaStr = (rawTarifa && typeof rawTarifa === "object") ? (rawTarifa.url || rawTarifa.toString()) : String(rawTarifa || "");
 
@@ -2742,7 +2732,6 @@ async function fetchSalasFromSheet() {
     if (previewUrl) console.log("[Zubale] ✅ Tarifa:", name, "→", previewUrl);
   }
 
-  // Agrupar por región
   const regionMap = {};
   salas.forEach(s => {
     if (!regionMap[s.region]) {
@@ -2754,8 +2743,6 @@ async function fetchSalasFromSheet() {
 
   return Object.values(regionMap).sort((a, b) => b.salas.length - a.salas.length);
 }
-
-/* REGIONES ahora se carga dinámicamente desde Google Sheets via fetchSalasFromSheet() */
 
 /* ─────────────────────────────────────────────────
    HEADER
@@ -2956,7 +2943,6 @@ function StoreMapModal({ rol, store, cityName, onClose, onInscribirme, onShowTar
     L.marker([store.lat, store.lng], { icon }).addTo(map);
 
     mRef.current = map;
-    // Invalidate + redraw varias veces para asegurar tiles en mobile
     [60, 180, 380, 750].forEach(delay => setTimeout(() => {
       if (!mRef.current) return;
       mRef.current.invalidateSize({ animate: false });
@@ -3129,14 +3115,12 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
     return () => { cancelled = true; document.body.style.overflow = prev; };
   }, []);
 
-  /* Filtrar salas por rol seleccionado */
   const regionesPorRol = useMemo(() => {
     if (!sheetRegiones) return [];
     return sheetRegiones
       .map(r => ({
         ...r,
         salas: r.salas.filter(s => {
-          // Si la sala tiene rol, filtrar. Si no tiene, mostrar en todos.
           if (!s.rol) return true;
           return s.rol.toLowerCase() === rol.toLowerCase();
         }),
@@ -3157,7 +3141,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [tarifaStore]);
 
-  /* filtrado por búsqueda + retail */
   const filteredRegions = useMemo(() => {
     const q = query.toLowerCase().trim();
     return regionesPorRol
@@ -3183,7 +3166,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
   /* ─── Inicializar el mapa Leaflet (solo si el contenedor está visible y datos cargados) ─── */
   useEffect(() => {
     if (!mapElRef.current || mapRef.current || !window.L || !sheetRegiones) return;
-    // Esperar a que el contenedor sea visible (display:none → width=0)
     const rect = mapElRef.current.getBoundingClientRect();
     if (rect.width < 20 || rect.height < 20) return;
     const L = window.L;
@@ -3194,8 +3176,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
       zoomControl: true,
       scrollWheelZoom: true,
     });
-    // CartoDB Voyager: basemap gratuito sin API key ni Referer, estilo Google Maps.
-    // Nota: sin el sufijo @2x para máxima compatibilidad en mobile.
     const tileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", {
       maxZoom: 19,
       subdomains: "abcd",
@@ -3225,8 +3205,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
     };
     mapElRef.current.addEventListener("click", handlePopupBtnClick);
 
-    // ResizeObserver: cada vez que el contenedor cambia de tamaño (ej. cuando en mobile
-    // se hace visible el tab "Mapa"), forzamos a Leaflet a recalcular y repintar tiles.
     if (typeof ResizeObserver !== "undefined") {
       const ro = new ResizeObserver(() => {
         if (mapRef.current) mapRef.current.invalidateSize({ animate: false });
@@ -3235,7 +3213,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
       roRef.current = ro;
     }
 
-    // Invalidate varias veces al inicio para captar cualquier layout tardío del modal.
     [50, 150, 350, 700, 1200].forEach(delay => setTimeout(() => {
       if (mapRef.current) mapRef.current.invalidateSize({ animate: false });
     }, delay));
@@ -3246,14 +3223,12 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
     };
   }, [sheetRegiones]);
 
-  // Init or invalidate map when switching to mapa view on mobile
   useEffect(() => {
     if (mobileView !== "mapa" || !mapElRef.current || !window.L || !sheetRegiones) return;
     if (mapRef.current) {
       setTimeout(() => { if (mapRef.current) mapRef.current.invalidateSize(); }, 150);
       return;
     }
-    // Map not yet initialized (hidden on mount). Wait for display to take effect.
     const timer = setTimeout(() => {
       if (mapRef.current || !mapElRef.current) return;
       const rect = mapElRef.current.getBoundingClientRect();
@@ -3265,7 +3240,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
       mapRef.current = map;
       setMapReady(true);
 
-      // Event delegation for popup buttons
       mapElRef.current.addEventListener("click", (e) => {
         const tarifaBtn = e.target.closest(".popup-tarifa-btn");
         if (tarifaBtn) {
@@ -3276,7 +3250,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
         }
       });
 
-      // Invalidate a few times to ensure tiles load
       [100, 300, 600].forEach(d => setTimeout(() => { if (mapRef.current) mapRef.current.invalidateSize(); }, d));
     }, 250);
     return () => clearTimeout(timer);
@@ -3288,15 +3261,12 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
     if (!map || !activeRegion || !window.L) return;
     const L = window.L;
 
-    // limpiar marcadores anteriores
     markersRef.current.forEach(m => map.removeLayer(m));
     markersRef.current = [];
     popupRefs.current = {};
 
-    // mover la vista a la ciudad
     map.flyTo(activeRegion.center, activeRegion.zoom, { duration: 0.6 });
 
-    // agregar nuevos marcadores
     activeRegion.salas.forEach((s, i) => {
       if (typeof s.lat !== "number" || typeof s.lng !== "number") return;
       const isActive = selectedStoreIdx === i;
@@ -3311,7 +3281,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
       });
       const marker = L.marker([s.lat, s.lng], { icon }).addTo(map);
 
-      // popup HTML — data attrs para el handler
       const escapedName = s.name.replace(/"/g, "&quot;");
       const escapedUrl = (s.tarifaLink || "").replace(/"/g, "&quot;");
       const popupHtml = `
@@ -3348,7 +3317,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
       popupRefs.current[i] = marker;
     });
 
-    // fit bounds si hay varias salas
     if (activeRegion.salas.length > 1) {
       const bounds = L.latLngBounds(activeRegion.salas.map(s => [s.lat, s.lng]));
       map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
@@ -3391,7 +3359,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
           setRegionIdx(best.regionIdx);
           setOpenStore(best.storeIdx);
           setSelectedStoreIdx(best.storeIdx);
-          // Abrir el mini-mapa del local más cercano
           setStoreOnMap({ store: best.store, cityName: best.city.nombre });
         } else {
           alert("No encontramos salas cerca de tu ubicación.");
@@ -3661,7 +3628,6 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
 /* ─────────────────────────────────────────────────
    APP
    ───────────────────────────────────────────────── */
-/* SVG icon paths (Lucide-style) */
 const TL_ICONS = {
   download: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
   user: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
@@ -3706,7 +3672,6 @@ function Timeline({ sheetVideos, onPlayVideo }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Lock body scroll when image modal is open + reset zoom
   useEffect(() => {
     if (viewImage) {
       setImgZoom(1);
@@ -3749,7 +3714,6 @@ function Timeline({ sheetVideos, onPlayVideo }) {
               <div className="tl-label">{step.label}</div>
             </div>
           ))}
-          {/* Flecha final de la línea */}
           <div className="tl-arrow"></div>
         </div>
 
@@ -3822,7 +3786,6 @@ function App() {
     });
   }, []);
 
-  // Lock body scroll when video modal is open
   useEffect(() => {
     if (playingVideo) {
       const prev = document.body.style.overflow;
@@ -4131,11 +4094,7 @@ function App() {
 /* ─────────────────────────────────────────────────
    CHATBOT WIDGET (Groq + Llama 3.3 70B)
    ───────────────────────────────────────────────── */
-// API key se maneja via serverless function en Vercel (/api/chat)
-// Para desarrollo local, pega tu key aquí temporalmente:
 const GROQ_API_KEY = "";
-
-// CHATBOT_SYSTEM_PROMPT se carga desde chatbot-prompt.js
 
 /* ── Formatea markdown ligero a HTML para mensajes del bot ── */
 function formatBotMessage(text) {
@@ -4208,7 +4167,6 @@ function ChatBot() {
           })),
       ];
 
-      // Si hay API key local, llamar directo a Groq; si no, usar proxy de Vercel
       const useProxy = !GROQ_API_KEY;
       const fetchUrl = useProxy ? "/api/chat" : "https://api.groq.com/openai/v1/chat/completions";
       const fetchHeaders = { "Content-Type": "application/json" };
