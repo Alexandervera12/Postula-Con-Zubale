@@ -3113,6 +3113,7 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
   const [storeOnMap, setStoreOnMap] = useState(null); // {store, regionName}
   const [locating, setLocating] = useState(false);
   const [mobileView, setMobileView] = useState("lista"); // "lista" | "mapa"
+  const [mapReady, setMapReady] = useState(false);
 
   /* ─── NUEVO: datos desde Google Sheets ─── */
   const [sheetRegiones, setSheetRegiones] = useState(null); // null = loading
@@ -3203,6 +3204,7 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
     tileLayer.addTo(map);
     mapRef.current = map;
     tileLayerRef.current = tileLayer;
+    setMapReady(true);
 
     /* Event delegation para botones dentro de popups de Leaflet.
        Más robusto que asignar .onclick en popupopen, porque no depende
@@ -3261,6 +3263,7 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
       const map = L.map(mapElRef.current, { center: initial.center, zoom: initial.zoom, zoomControl: true, scrollWheelZoom: true });
       L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png", { maxZoom: 19, subdomains: "abcd" }).addTo(map);
       mapRef.current = map;
+      setMapReady(true);
 
       // Event delegation for popup buttons
       mapElRef.current.addEventListener("click", (e) => {
@@ -3350,7 +3353,7 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
       const bounds = L.latLngBounds(activeRegion.salas.map(s => [s.lat, s.lng]));
       map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
     }
-  }, [regionIdx, query, retailFilter, activeRegion?.nombre]);
+  }, [regionIdx, query, retailFilter, activeRegion?.nombre, mapReady]);
 
   /* ─── Cuando se selecciona una sala desde la lista, abrir popup en el mapa ─── */
   useEffect(() => {
