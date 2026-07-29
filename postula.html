@@ -3615,6 +3615,7 @@ const TIMELINE_STEPS = [
 function Timeline({ sheetVideos, onPlayVideo }) {
   const [activeIdx, setActiveIdx] = useState(null);
   const [viewImage, setViewImage] = useState(null); // {titulo, link}
+  const [imgZoom, setImgZoom] = useState(1);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -3625,9 +3626,10 @@ function Timeline({ sheetVideos, onPlayVideo }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Lock body scroll when image modal is open
+  // Lock body scroll when image modal is open + reset zoom
   useEffect(() => {
     if (viewImage) {
+      setImgZoom(1);
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return () => { document.body.style.overflow = prev; };
@@ -3710,11 +3712,13 @@ function Timeline({ sheetVideos, onPlayVideo }) {
               <div className="tarifa-modal-title">{viewImage.titulo}</div>
               <button className="tarifa-close-btn" onClick={() => setViewImage(null)} aria-label="Cerrar">×</button>
             </div>
-            <div className="tarifa-img-wrap">
+            <div className="tarifa-img-wrap" style={{ overflow: "auto", maxHeight: "80vh", cursor: imgZoom > 1 ? "grab" : "zoom-in" }}
+              onWheel={(e) => { e.stopPropagation(); setImgZoom(z => Math.min(4, Math.max(1, z + (e.deltaY < 0 ? 0.3 : -0.3)))); }}>
               <img
                 src={driveToDirectImageUrl(viewImage.link) || viewImage.link}
                 alt={viewImage.titulo}
-                style={{ width: "100%", maxHeight: "80vh", objectFit: "contain", display: "block", background: "#fff" }}
+                style={{ width: "100%", transform: `scale(${imgZoom})`, transformOrigin: "top center", display: "block", background: "#fff", transition: "transform 0.15s ease" }}
+                onClick={() => setImgZoom(z => z > 1 ? 1 : 2)}
               />
             </div>
           </div>
