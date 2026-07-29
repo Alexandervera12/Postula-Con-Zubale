@@ -3724,13 +3724,13 @@ function Timeline({ sheetVideos, onPlayVideo }) {
       </div>
 
       {viewImage && ReactDOM.createPortal(
-        <div className="overlay tarifa-overlay" onClick={(e) => e.target === e.currentTarget && setViewImage(null)}>
-          <div className="tarifa-modal-img">
-            <div className="tarifa-modal-head">
+        <div className="overlay tarifa-overlay" style={{ alignItems: "flex-start", paddingTop: "20px", paddingBottom: "20px" }} onClick={(e) => e.target === e.currentTarget && setViewImage(null)}>
+          <div className="tarifa-modal-img" style={{ marginTop: "auto", marginBottom: "auto" }}>
+            <div className="tarifa-modal-head" style={{ position: "sticky", top: 0, zIndex: 2 }}>
               <div className="tarifa-modal-title">{viewImage.titulo}</div>
               <button className="tarifa-close-btn" onClick={() => setViewImage(null)} aria-label="Cerrar">×</button>
             </div>
-            <div className="tarifa-img-wrap" style={{ overflow: "auto", maxHeight: "80vh", cursor: imgZoom > 1 ? "zoom-out" : "zoom-in" }}>
+            <div className="tarifa-img-wrap" style={{ cursor: imgZoom > 1 ? "zoom-out" : "zoom-in" }}>
               <img
                 src={driveToDirectImageUrl(viewImage.link) || viewImage.link}
                 alt={viewImage.titulo}
