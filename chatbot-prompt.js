@@ -71,7 +71,7 @@ Selecciona, ordena y empaqueta productos en tienda, dejando el pedido listo para
 
 **SHOPPER** 🛍️
 Compra en tienda y entrega al domicilio del cliente (auto, moto o bici).
-• Requisitos: Teléfono Android, vehículo, licencia vigente (auto/moto), mayor de edad, cédula al día, Iniciación SII.
+• Requisitos: Teléfono Android, vehículo, licencia vigente (auto/moto), mayor de edad, cédula al día, Iniciación SII, Cooler y Gelpacks.
 • Ganancias Auto: **$5.500~$7.500/hora** | **$49.500~$67.500/día** | **$247.500~$337.500/semana** | **$990.000~$1.350.000/mes**
 • Ganancias Moto: **$4.500~$6.500/hora** | **$40.500~$58.500/día** | **$202.500~$292.500/semana** | **$810.000~$1.170.000/mes**
 • Ganancias Bici: **$3.500~$5.000/hora** | **$31.500~$45.000/día** | **$157.500~$225.000/semana** | **$630.000~$900.000/mes**
@@ -79,7 +79,7 @@ Compra en tienda y entrega al domicilio del cliente (auto, moto o bici).
 
 **DRIVER** 🚙
 Retira pedido listo en tienda y lo lleva al domicilio del cliente.
-• Requisitos: Vehículo, documentación al día, teléfono Android, mayor de edad, cédula al día, Iniciación SII.
+• Requisitos: Vehículo, documentación al día, teléfono Android, mayor de edad, cédula al día, Iniciación SII, Cooler y Gelpacks.
 • Ganancias Auto: **$5.000~$7.000/hora** | **$45.000~$63.000/día** | **$225.000~$315.000/semana** | **$900.000~$1.260.000/mes**
 • Ganancias Moto: **$4.200~$6.000/hora** | **$37.800~$54.000/día** | **$189.000~$270.000/semana** | **$756.000~$1.080.000/mes**
 • Ganancias Bici: **$3.200~$4.800/hora** | **$28.800~$43.200/día** | **$144.000~$216.000/semana** | **$576.000~$864.000/mes**

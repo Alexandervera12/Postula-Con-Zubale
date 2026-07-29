@@ -2449,6 +2449,7 @@ const ROLES = {
       "Cédula de identidad al día",
       "Iniciación de actividades en Servicios de Impuestos Internos (SII)",
       "Ser titular de una cuenta bancaria",
+      "Cooler y Gelpacks",
     ],
     ganancias: [
       { label: "Por Hora",      value: "$5.500 ~ $7.500" },
@@ -2523,6 +2524,7 @@ const ROLES = {
       "Cédula de identidad al día",
       "Ser titular de una cuenta bancaria",
       "Iniciación de actividades en Servicios de Impuestos Internos (SII)",
+      "Cooler y Gelpacks",
     ],
     ganancias: [
       { label: "Por Hora",      value: "$5.000 ~ $7.000" },
@@ -3703,6 +3705,7 @@ function Timeline({ sheetVideos, onPlayVideo }) {
     <section className="timeline-card fade-in" ref={ref}>
       <div className="timeline-card-inner">
         <div className="timeline-title">Primeros Pasos para un Zubalero</div>
+        <div style={{textAlign:"center",fontSize:"13px",color:"#6b7280",marginTop:"-2px",marginBottom:"6px",fontStyle:"italic"}}>Puedes hacer click en los iconos para más información</div>
         <div className="timeline-track">
           {TIMELINE_STEPS.map((step, i) => (
             <div
@@ -4096,6 +4099,97 @@ function App() {
    ───────────────────────────────────────────────── */
 const GROQ_API_KEY = "";
 
+/* ── Sesion unica para metricas ── */
+const CHAT_SESSION_ID = "s_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+
+/* ── Enviar metrica al sheet ── */
+function trackMetrica(tipo, valor) {
+  try {
+    fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "metrica", tipo, valor, sesion: CHAT_SESSION_ID }),
+    });
+  } catch (e) {}
+}
+
+/* ── Enviar registro al sheet ── */
+function guardarRegistro(data) {
+  return fetch(GAS_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ action: "registro", ...data, sesion: CHAT_SESSION_ID }),
+  }).then(r => r.json());
+}
+
+/* ── Cargar salas dinamicamente para inyectar al prompt ── */
+async function cargarSalasParaPrompt() {
+  try {
+    const url = GAS_URL + (GAS_URL.includes("?") ? "&" : "?") + "sheet=Panel";
+    const res = await fetch(url);
+    const rows = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0) return "";
+    const salas = [];
+    for (const r of rows) {
+      const kEstado = findKey(r, "estado");
+      const kTienda = findKey(r, "sala", "tienda");
+      const kRol = findKey(r, "servicio", "rol");
+      const kComuna = findKey(r, "comuna");
+      const kDireccion = findKey(r, "direcc", "address");
+      const kForm = findKey(r, "form", "inscri", "postul");
+      const estado = String(r[kEstado] || "").trim().toUpperCase();
+      if (estado === "OFF") continue;
+      const name = kTienda ? String(r[kTienda] || "").trim() : "";
+      if (!name) continue;
+      const rol = kRol ? String(r[kRol] || "").trim() : "";
+      const comuna = kComuna ? String(r[kComuna] || "").trim() : "";
+      const dir = kDireccion ? String(r[kDireccion] || "").trim() : "";
+      const form = kForm ? String(r[kForm] || "").trim() : "";
+      salas.push({ name, rol, comuna, dir, form });
+    }
+    if (salas.length === 0) return "";
+    let txt = "\n\nSALAS DISPONIBLES (DATOS ACTUALIZADOS DESDE LA BASE DE DATOS):\n";
+    txt += "(Usa SIEMPRE estos links, NO los que aparezcan arriba en el prompt base)\n\n";
+    salas.forEach(s => {
+      txt += "- **" + s.name + "**";
+      if (s.rol) txt += " (" + s.rol + ")";
+      if (s.comuna) txt += " — " + s.comuna;
+      if (s.dir) txt += ", " + s.dir;
+      if (s.form) txt += " → Inscribete aqui: [Postular a " + s.name + "](" + s.form + ")";
+      txt += "\n";
+    });
+    return txt;
+  } catch (e) {
+    console.warn("[Zubale] Error cargando salas para prompt:", e);
+    return "";
+  }
+}
+
+/* ── Cargar prompt personalizado desde Config sheet ── */
+async function cargarPromptCustom() {
+  try {
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "leer_config", clave: "system_prompt" }),
+    });
+    const data = await res.json();
+    if (data.valor && String(data.valor).trim().length > 50) return String(data.valor).trim();
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+/* ── Detectar rol mencionado en texto ── */
+function detectarRol(text) {
+  const t = text.toLowerCase();
+  if (/\bpicker\b/.test(t)) return "Picker";
+  if (/\bshopper\b/.test(t)) return "Shopper";
+  if (/\bdriver\b/.test(t)) return "Driver";
+  return null;
+}
+
 /* ── Formatea markdown ligero a HTML para mensajes del bot ── */
 function formatBotMessage(text) {
   let html = text
@@ -4133,8 +4227,22 @@ function ChatBot() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [dynamicPrompt, setDynamicPrompt] = useState("");
+  const [regFlow, setRegFlow] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const sessionTracked = useRef(false);
+
+  useEffect(() => {
+    Promise.all([cargarSalasParaPrompt(), cargarPromptCustom()]).then(([salasCtx, customPrompt]) => {
+      let prompt = customPrompt || (typeof CHATBOT_SYSTEM_PROMPT !== "undefined" ? CHATBOT_SYSTEM_PROMPT : "");
+      if (salasCtx) {
+        prompt = prompt.replace(/SALAS DISPONIBLES \(con links[\s\S]*?(?=\n\nPRIMEROS PASOS|\n\nPROCESO DE|\n\nDATOS GENERALES|$)/, "") + salasCtx;
+      }
+      prompt += "\n\nREGISTRO DE USUARIOS:\nSi el usuario dice que quiere registrarse, postular, o inscribirse, ademas de darle los links, preguntale si quiere que lo guies paso a paso. Si dice que si, pidele sus datos uno por uno: nombre completo, RUT, telefono. Luego pregunta si ya descargo la app (si/no) y si ya se registro en ella (si/no). Confirma los datos antes de guardar.";
+      setDynamicPrompt(prompt);
+    });
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -4146,19 +4254,92 @@ function ChatBot() {
     }
   }, [loading, isOpen]);
 
+  useEffect(() => {
+    if (isOpen && !sessionTracked.current) {
+      sessionTracked.current = true;
+      trackMetrica("sesion_abierta", "1");
+    }
+  }, [isOpen]);
+
+  const REG_STEPS = ["nombre", "rut", "telefono", "descargo_app", "se_registro", "confirmar"];
+  const REG_QUESTIONS = {
+    nombre: "¿Cuál es tu nombre completo?",
+    rut: "¿Cuál es tu RUT? (ej: 12.345.678-9)",
+    telefono: "¿Cuál es tu número de teléfono? (ej: +56 9 1234 5678)",
+    descargo_app: "¿Ya descargaste la app de Zubale? (sí / no)",
+    se_registro: "¿Ya te registraste en la app? (sí / no)",
+  };
+
+  const startRegistration = () => {
+    setRegFlow({ step: 0, data: {} });
+    setMessages(prev => [...prev, { role: "bot", text: "¡Genial! Te voy a ayudar con tu registro. " + REG_QUESTIONS.nombre }]);
+    trackMetrica("registro_iniciado", "1");
+  };
+
+  const handleRegInput = (text) => {
+    if (!regFlow) return false;
+    const stepName = REG_STEPS[regFlow.step];
+    if (stepName === "confirmar") {
+      const t = text.toLowerCase();
+      if (t.includes("si") || t.includes("sí") || t.includes("ok") || t.includes("correcto")) {
+        guardarRegistro(regFlow.data);
+        setMessages(prev => [...prev, { role: "user", text }, { role: "bot", text: "¡Listo! Tus datos han sido registrados exitosamente. Un ejecutivo se pondrá en contacto contigo si es necesario. ¿Hay algo más en lo que te pueda ayudar?" }]);
+        trackMetrica("registro_completado", "1");
+        setRegFlow(null);
+        return true;
+      } else {
+        setMessages(prev => [...prev, { role: "user", text }, { role: "bot", text: "Entendido, vamos de nuevo. " + REG_QUESTIONS.nombre }]);
+        setRegFlow({ step: 0, data: {} });
+        return true;
+      }
+    }
+    const newData = { ...regFlow.data, [stepName]: text };
+    const nextStep = regFlow.step + 1;
+    const nextStepName = REG_STEPS[nextStep];
+    if (nextStepName === "confirmar") {
+      const resumen = "Perfecto, confirma tus datos:\n\n• **Nombre:** " + newData.nombre + "\n• **RUT:** " + newData.rut + "\n• **Teléfono:** " + newData.telefono + "\n• **Descargó app:** " + newData.descargo_app + "\n• **Se registró:** " + newData.se_registro + "\n\n¿Están correctos? (sí / no)";
+      setMessages(prev => [...prev, { role: "user", text }, { role: "bot", text: resumen }]);
+      setRegFlow({ step: nextStep, data: newData });
+      return true;
+    }
+    setMessages(prev => [...prev, { role: "user", text }, { role: "bot", text: REG_QUESTIONS[nextStepName] }]);
+    setRegFlow({ step: nextStep, data: newData });
+    return true;
+  };
+
   const sendMessage = async () => {
     const text = input.trim();
     if (!text || loading) return;
+    setInput("");
+
+    if (regFlow !== null) {
+      const handled = handleRegInput(text);
+      if (handled) return;
+    }
+
+    const lower = text.toLowerCase();
+    if ((lower.includes("registr") || lower.includes("inscrib") || lower.includes("quiero postular")) && !regFlow) {
+      const wantsReg = lower.includes("registrarme") || lower.includes("inscribirme") || lower.includes("mis datos") || lower.includes("paso a paso");
+      if (wantsReg) {
+        setMessages(prev => [...prev, { role: "user", text }]);
+        startRegistration();
+        return;
+      }
+    }
 
     const userMsg = { role: "user", text };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
-    setInput("");
     setLoading(true);
 
+    trackMetrica("pregunta", text.slice(0, 200));
+    const rolDetected = detectarRol(text);
+    if (rolDetected) trackMetrica("rol_consultado", rolDetected);
+
     try {
+      const systemPrompt = dynamicPrompt || (typeof CHATBOT_SYSTEM_PROMPT !== "undefined" ? CHATBOT_SYSTEM_PROMPT : "");
       const apiMessages = [
-        { role: "system", content: CHATBOT_SYSTEM_PROMPT },
+        { role: "system", content: systemPrompt },
         ...newMessages
           .filter((m, i) => !(i === 0 && m.role === "bot"))
           .map(m => ({
@@ -4189,6 +4370,15 @@ function ChatBot() {
       const botText = data?.choices?.[0]?.message?.content
         || "Lo siento, no pude procesar tu consulta. Intenta de nuevo.";
       setMessages(prev => [...prev, { role: "bot", text: botText }]);
+
+      if (botText.toLowerCase().includes("registr") && botText.toLowerCase().includes("paso a paso")) {
+        setTimeout(() => {
+          setMessages(prev => [...prev, {
+            role: "bot",
+            text: '¿Te gustaría que registre tus datos ahora? Escribe "quiero registrarme" para comenzar.',
+          }]);
+        }, 1000);
+      }
     } catch (err) {
       console.error("Chatbot error:", err);
       setMessages(prev => [...prev, {
@@ -4240,7 +4430,7 @@ function ChatBot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Escribe tu pregunta..."
+              placeholder={regFlow ? "Escribe tu respuesta..." : "Escribe tu pregunta..."}
               disabled={loading}
               autoFocus
             />
