@@ -151,10 +151,190 @@
     /* ── MAIN CONTENT ── */
     .main {
       max-width: 1180px;
-      margin: -40px auto 0;
+      margin: 0 auto;
       padding: 0 20px 60px;
       position: relative;
       z-index: 5;
+    }
+
+    /* ── TIMELINE CARD ── */
+    .timeline-card {
+      max-width: 1100px;
+      margin: 10px auto 32px;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+    .timeline-card-inner {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 28px 32px 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+    .timeline-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    .timeline-track {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0 6px;
+    }
+    .timeline-track::before {
+      content: "";
+      position: absolute;
+      top: 20px;
+      left: 40px;
+      right: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue-light), var(--blue), var(--blue-light));
+      border-radius: 2px;
+      z-index: 0;
+    }
+    .tl-node {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      cursor: pointer;
+      min-width: 0;
+    }
+    .tl-dot {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 2.5px solid var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s;
+      flex-shrink: 0;
+    }
+    .tl-dot svg {
+      width: 18px; height: 18px;
+      stroke: var(--blue);
+      fill: none;
+      transition: stroke 0.2s;
+    }
+    .tl-node:hover .tl-dot {
+      transform: scale(1.08);
+      box-shadow: 0 0 0 4px rgba(21,87,214,0.08);
+    }
+    .tl-node.active .tl-dot {
+      background: var(--blue);
+      border-color: var(--blue);
+      transform: scale(1.15);
+      box-shadow: 0 0 0 6px rgba(21,87,214,0.15);
+    }
+    .tl-node.active .tl-dot svg { stroke: var(--white); }
+    .tl-label {
+      margin-top: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.3;
+      max-width: 100px;
+      transition: color 0.2s;
+    }
+    .tl-node.active .tl-label { color: var(--blue); }
+    /* Detail panel below track */
+    .tl-detail {
+      margin-top: 20px;
+      padding: 18px 22px;
+      background: var(--gray);
+      border-radius: 14px;
+      animation: fadeSlideIn 0.25s ease;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .tl-detail-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .tl-detail-text {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .tl-detail .app-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .tl-detail .app-btns a img {
+      height: 38px;
+      border-radius: 6px;
+    }
+    /* Arrow at end of timeline */
+    .tl-arrow {
+      display: flex;
+      align-items: center;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+    .tl-arrow svg {
+      width: 28px; height: 28px;
+    }
+    /* Action buttons in detail panel */
+    .tl-detail-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .tl-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid var(--blue);
+      background: var(--white);
+      color: var(--blue);
+      font-family: 'Lexend', sans-serif;
+      transition: all 0.2s;
+    }
+    .tl-action-btn:hover {
+      background: var(--blue-light);
+    }
+    .tl-action-btn svg {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+    }
+    .tl-action-video {
+      background: #FF0000;
+      color: var(--white);
+      border-color: #FF0000;
+    }
+    .tl-action-video:hover {
+      background: #CC0000;
+    }
+    .tl-action-video svg {
+      fill: var(--white);
+    }
+    @media (max-width: 640px) {
+      .timeline-card-inner { padding: 20px 16px 18px; }
+      .timeline-track { overflow-x: auto; padding-bottom: 6px; }
+      .tl-label { font-size: 10px; max-width: 70px; }
+      .tl-dot { width: 34px; height: 34px; }
+      .tl-dot svg { width: 15px; height: 15px; }
+      .tl-detail { padding: 14px 16px; }
+      .tl-action-btn { font-size: 12px; padding: 8px 12px; }
     }
 
     /* SPLIT CONTENT */
@@ -1001,6 +1181,8 @@
       backdrop-filter: blur(5px);
       display: flex; align-items: center; justify-content: center;
       z-index: 100; padding: 20px;
+      overscroll-behavior: contain;
+      overflow-y: auto;
       animation: fadeIn 0.2s ease;
     }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -1667,15 +1849,10 @@
 
     /* ── TARIFAS MODAL (imagen desde Drive) ── */
     .tarifa-modal-img {
-      background: var(--blue);
       width: 95vw;
       max-width: 700px;
-      border-radius: 20px;
-      overflow: hidden;
       animation: slideUp 0.32s cubic-bezier(.4,0,.2,1);
-      box-shadow: inset 0 0 0 1px var(--blue), 0 28px 70px rgba(0,0,0,0.25);
-      outline: 2px solid var(--blue);
-      outline-offset: -2px;
+      filter: drop-shadow(0 28px 40px rgba(0,0,0,0.25));
     }
     .tarifa-modal-head {
       display: flex;
@@ -1714,6 +1891,8 @@
       align-items: center;
       justify-content: center;
       background: #f5f5f7;
+      border-radius: 0 0 20px 20px;
+      overflow: hidden;
     }
     .tarifa-iframe {
       width: 100%;
@@ -2174,6 +2353,7 @@
   if (typeof CHATBOT_FAQ_EXTRA === "undefined") { var CHATBOT_FAQ_EXTRA = ""; }
 </script>
 <script src="chatbot-faq.js" onerror="/* archivo opcional, sin efecto si no existe */"></script>
+<script src="chatbot-prompt.js"></script>
 
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
@@ -2576,13 +2756,15 @@ function GuiasModal({ rol, onClose }) {
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const handleKey = (e) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowRight") setIdx(i => Math.min(slides.length - 1, i + 1));
       if (e.key === "ArrowLeft")  setIdx(i => Math.max(0, i - 1));
     };
     window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
+    return () => { window.removeEventListener("keydown", handleKey); document.body.style.overflow = prev; };
   }, [slides.length]);
 
   const total = slides.length;
@@ -2825,7 +3007,7 @@ async function fetchVideosFromSheet() {
       const titulo = kTipo ? String(r[kTipo] || "").trim() : "";
       const link   = kLink ? String(r[kLink] || "").trim() : "";
       return { titulo, link, ytId: youtubeIdFromUrl(link) };
-    }).filter(v => v.titulo && v.ytId);
+    }).filter(v => v.titulo && v.link);
   } catch (err) {
     console.warn("[Zubale] Error cargando videos:", err);
     return [];
@@ -2839,9 +3021,11 @@ function TarifaModal({ storeName, imageUrl, onClose }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const handleKey = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
+    return () => { window.removeEventListener("keydown", handleKey); document.body.style.overflow = prev; };
   }, []);
 
   return (
@@ -2890,11 +3074,13 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
   const [sheetError, setSheetError] = useState(null);
 
   useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     let cancelled = false;
     fetchSalasFromSheet()
       .then(data => { if (!cancelled) setSheetRegiones(data); })
       .catch(err => { if (!cancelled) { console.error("Sheet fetch error:", err); setSheetError(err.message); setSheetRegiones([]); }});
-    return () => { cancelled = true; };
+    return () => { cancelled = true; document.body.style.overflow = prev; };
   }, []);
 
   /* Filtrar salas por rol seleccionado */
@@ -3382,6 +3568,155 @@ function LocationsModal({ rol, onClose, onInscribirme }) {
 /* ─────────────────────────────────────────────────
    APP
    ───────────────────────────────────────────────── */
+/* SVG icon paths (Lucide-style) */
+const TL_ICONS = {
+  download: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
+  user: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+  calendar: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+  file: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+  mapPin: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+  award: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>,
+  rocket: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>,
+};
+
+const TIMELINE_STEPS = [
+  { icon: "download", label: "Descargar la app", title: "Descargar la app",
+    text: "Descarga la app de Zubale para comenzar tu proceso de registro.",
+    appLinks: true },
+  { icon: "user", label: "Completar tu usuario", title: "Completar tu usuario",
+    text: "Al ingresar a la app de Zubale deberás completar tu perfil y subir los documentos solicitados.",
+    videoRow: 0 },
+  { icon: "calendar", label: "Agendar slot trainee", title: "Agendar slot trainee",
+    text: "Una vez terminado tu registro, podrás ir a la sección reservas y tomar tu cita de capacitación. Es importante que consideres esto antes de asistir:",
+    imageRow: 2, videoRow: 1 },
+  { icon: "file", label: "Acuerdo e información", title: "Acuerdo e información",
+    text: "El día anterior a tu cita de capacitación te llegará un mensaje de recordatorio. Y a tu correo te llegará un acuerdo de prestación de servicios (recuerda revisar Spam). Es importante que lo firmes antes de asistir a tu cita." },
+  { icon: "mapPin", label: "Hacer Check-in", title: "Hacer Check-in",
+    text: "Una vez estés en sala, recuerda siempre marcar tu Check-In en la misma aplicación de Zubale." },
+  { icon: "award", label: "Capacitación", title: "Capacitación",
+    text: "Acércate al mesón de soporte para recibir tu capacitación. Es importante que si tienes dudas de la capacitación misma, las realices con el capacitador para recibir orientación." },
+  { icon: "rocket", label: "Empezar a ganar", title: "¡Empezar a ganar!",
+    text: "¡Felicidades! ¡Ya eres un Zubalero! Estás listo para comenzar a ganar dinero. Recuerda siempre en tu app Zubale agendar tus citas, y al asistir a ellas siempre marcar tu Check-In." },
+];
+
+function Timeline({ sheetVideos, onPlayVideo }) {
+  const [activeIdx, setActiveIdx] = useState(null);
+  const [viewImage, setViewImage] = useState(null); // {titulo, link}
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setActiveIdx(null);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Lock body scroll when image modal is open
+  useEffect(() => {
+    if (viewImage) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [viewImage]);
+
+  const active = activeIdx !== null ? TIMELINE_STEPS[activeIdx] : null;
+
+  const handleVideo = (rowIdx) => {
+    const vid = sheetVideos[rowIdx];
+    if (!vid) return;
+    if (window.location.protocol === "file:") {
+      window.open(vid.link, "_blank");
+    } else {
+      onPlayVideo(vid);
+    }
+  };
+
+  const handleImage = (rowIdx) => {
+    const item = sheetVideos[rowIdx];
+    if (!item) return;
+    setViewImage(item);
+  };
+
+  return (
+    <section className="timeline-card fade-in" ref={ref}>
+      <div className="timeline-card-inner">
+        <div className="timeline-title">Primeros Pasos para un Zubalero</div>
+        <div className="timeline-track">
+          {TIMELINE_STEPS.map((step, i) => (
+            <div
+              key={i}
+              className={"tl-node" + (activeIdx === i ? " active" : "")}
+              onClick={() => setActiveIdx(activeIdx === i ? null : i)}
+            >
+              <div className="tl-dot">{TL_ICONS[step.icon]}</div>
+              <div className="tl-label">{step.label}</div>
+            </div>
+          ))}
+          {/* Flecha final */}
+          <div className="tl-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </div>
+        </div>
+
+        {active && (
+          <div className="tl-detail" key={activeIdx}>
+            <div className="tl-detail-title">{active.title}</div>
+            <div className="tl-detail-text">{active.text}</div>
+            {active.appLinks && (
+              <div className="app-btns">
+                <a href="https://play.google.com/store/apps/details?id=com.zubale.repartidor" target="_blank" rel="noopener noreferrer">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" />
+                </a>
+                <a href="https://apps.apple.com/app/zubale/id1478219498" target="_blank" rel="noopener noreferrer">
+                  <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" />
+                </a>
+              </div>
+            )}
+            <div className="tl-detail-actions">
+              {active.imageRow != null && sheetVideos[active.imageRow] && (
+                <button className="tl-action-btn" onClick={() => handleImage(active.imageRow)}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  Ver Imagen
+                </button>
+              )}
+              {active.videoRow != null && sheetVideos[active.videoRow] && (
+                <button className="tl-action-btn tl-action-video" onClick={() => handleVideo(active.videoRow)}>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  Ver Video
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {viewImage && ReactDOM.createPortal(
+        <div className="overlay tarifa-overlay" onClick={(e) => e.target === e.currentTarget && setViewImage(null)}>
+          <div className="tarifa-modal-img">
+            <div className="tarifa-modal-head">
+              <div className="tarifa-modal-title">{viewImage.titulo}</div>
+              <button className="tarifa-close-btn" onClick={() => setViewImage(null)} aria-label="Cerrar">×</button>
+            </div>
+            <div className="tarifa-img-wrap">
+              <iframe
+                src={driveToPreviewUrl(viewImage.link) || viewImage.link}
+                style={{ width: "100%", height: "75vh", border: "none", display: "block" }}
+                allow="autoplay"
+                sandbox="allow-scripts allow-same-origin"
+              />
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+    </section>
+  );
+}
+
 function App() {
   const [rol, setRol] = useState("Picker");
   const [showLocations, setShowLocations] = useState(false);
@@ -3395,6 +3730,15 @@ function App() {
       if (vids.length) setSheetVideos(vids);
     });
   }, []);
+
+  // Lock body scroll when video modal is open
+  useEffect(() => {
+    if (playingVideo) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [playingVideo]);
 
   const handleInscribirme = (storeName, cityName) => {
     setShowLocations(false);
@@ -3422,6 +3766,9 @@ function App() {
           </div>
         </div>
       </section>
+
+      {/* TIMELINE: Primeros Pasos */}
+      <Timeline sheetVideos={sheetVideos} onPlayVideo={setPlayingVideo} />
 
       {/* CONTENT SPLIT */}
       <main className="main">
@@ -3547,8 +3894,8 @@ function App() {
             )}
 
             {/* Video de capacitación — primer video de hoja "URL" del Sheet */}
-            {sheetVideos.length > 0 ? (() => {
-              const vid = sheetVideos[0];
+            {sheetVideos.find(v => v.ytId) ? (() => {
+              const vid = sheetVideos.find(v => v.ytId);
               return (
                 <div className="video-card fade-in stagger-3">
                   <div className="video-card-head">
@@ -3697,134 +4044,7 @@ function App() {
 // Para desarrollo local, pega tu key aquí temporalmente:
 const GROQ_API_KEY = "";
 
-const CHATBOT_SYSTEM_PROMPT = `Eres "Zubalin", el asistente virtual de Zubale Chile. Tu único propósito es ayudar a personas interesadas en trabajar como Zubaleros (Picker, Shopper o Driver) en Chile.
-
-REGLAS ESTRICTAS (CUMPLIR SIEMPRE):
-1. SOLO responde preguntas sobre Zubale: roles, requisitos, ganancias, postulación y ubicaciones.
-2. Si preguntan algo fuera de tema, responde: "¡Hola! Soy Zubalin 🧡 Solo puedo ayudarte con información sobre cómo trabajar con nosotros como Picker, Shopper o Driver. ¿En qué te puedo ayudar?"
-3. Responde en español chileno, amigable, breve y claro.
-4. NUNCA inventes información. Usa SOLO los datos de abajo. Si no encuentras la respuesta, di: "No tengo esa información. Te sugiero revisar nuestra página o contactar a soporte."
-5. NO agregues pasos, requisitos ni condiciones que no estén listados aquí.
-6. NO uses frases genéricas inventadas.
-
-FORMATO DE RESPUESTAS (MUY IMPORTANTE — SEGUIR AL PIE DE LA LETRA):
-- SIEMPRE usa viñetas con "•" para listas de requisitos, ganancias, pasos, etc. NUNCA escribas listas en una sola oración separada por comas.
-- Usa **negritas** para datos clave.
-- Separa secciones con saltos de línea.
-- Cuando menciones una sala, SIEMPRE incluye su link markdown: [Nombre](URL).
-- Máximo 3-4 líneas por punto.
-- Un emoji por respuesta máximo.
-
-EJEMPLO DE RESPUESTA IDEAL (cuando preguntan por un rol):
-"🛍️ Para ser **Shopper** necesitas:
-
-• Teléfono Android
-• Vehículo (auto, moto o bici)
-• Licencia de conducir vigente (auto/moto)
-• Mayor de edad
-• Cédula al día
-• Iniciación de actividades en SII
-
-**Ganancias** (dependen del vehículo):
-• Auto: **$5.500~$7.500/hora**
-• Moto: **$4.500~$6.500/hora**
-• Bici: **$3.500~$5.000/hora**
-
-Postula ahora en una de nuestras salas:
-• [Postular a Lider Quilicura](URL)
-• [Postular a Lider Cordillera](URL)"
-
-SIGUE SIEMPRE ESTE FORMATO. Los requisitos van en viñetas separadas, NUNCA en un párrafo corrido.
-
-REGLA CLAVE DE POSTULACIÓN:
-- SIEMPRE que el usuario muestre interés en un rol o pregunte cómo postular, TERMINA tu respuesta con los links de inscripción.
-- Esto es OBLIGATORIO. No termines una respuesta sobre un rol sin incluir los links.
-
-REGLA DE INTERACTIVIDAD (MUY IMPORTANTE):
-- Sé CONVERSACIONAL, no genérico. Haz preguntas de vuelta para entender qué necesita el usuario.
-- Si el usuario dice algo vago como "quiero postular", "me interesa", "quiero trabajar", NO des un resumen de los 3 roles. Pregúntale: "¡Genial! 🧡 Tenemos 3 roles disponibles: **Picker** (armar pedidos en tienda), **Shopper** (comprar y entregar) y **Driver** (solo entregar). ¿Cuál te interesa más?"
-- Si ya sabes el rol que le interesa, pregúntale si quiere saber sobre ganancias, requisitos o postular directamente.
-- Siempre guía la conversación hacia el siguiente paso.
-
-GUÍAS Y CAPACITACIÓN:
-- Tenemos una "Guía del Buen Zubalero" disponible en la página principal (sección de cada rol).
-- Si el usuario pregunta cómo ser buen Picker/Shopper/Driver, o pide tips/consejos, responde con los tips que tengas en contexto y dile: "También puedes revisar nuestra **Guía del Buen Zubalero** en la sección del rol en nuestra página. Pronto tendremos videos de capacitación disponibles."
-- NO inventes tips ni consejos que no estén en el contexto.
-
-CONTEXTO DE ZUBALE CHILE:
-
-**PICKER** 🛒
-Selecciona, ordena y empaqueta productos en tienda, dejando el pedido listo para entrega.
-• Requisitos: Teléfono Android, mayor de edad, cédula al día, Iniciación de actividades en SII.
-• Ganancias: **$2.800~$3.500/hora** | **$25.200~$31.500/día** | **$126.000~$157.500/semana**
-• Tarifas: Hora regular $5.000, Hora punta $6.500, Bono productividad +$15.000, Express +$1.200
-• Inicio: Menos de 24 horas tras completar registro y capacitación.
-• No requiere experiencia previa.
-
-**SHOPPER** 🛍️
-Compra en tienda y entrega al domicilio del cliente (auto, moto o bici).
-• Requisitos: Teléfono Android, vehículo, licencia vigente (auto/moto), mayor de edad, cédula al día, Iniciación SII.
-• Ganancias Auto: **$5.500~$7.500/hora** | **$49.500~$67.500/día** | **$247.500~$337.500/semana** | **$990.000~$1.350.000/mes**
-• Ganancias Moto: **$4.500~$6.500/hora** | **$40.500~$58.500/día** | **$202.500~$292.500/semana** | **$810.000~$1.170.000/mes**
-• Ganancias Bici: **$3.500~$5.000/hora** | **$31.500~$45.000/día** | **$157.500~$225.000/semana** | **$630.000~$900.000/mes**
-• Tarifas: Hora regular $7.000, Hora punta $9.000, Bono entrega +$2.500, Bono km +$450/km.
-
-**DRIVER** 🚙
-Retira pedido listo en tienda y lo lleva al domicilio del cliente.
-• Requisitos: Vehículo, documentación al día, teléfono Android, mayor de edad, cédula al día, Iniciación SII.
-• Ganancias Auto: **$5.000~$7.000/hora** | **$45.000~$63.000/día** | **$225.000~$315.000/semana** | **$900.000~$1.260.000/mes**
-• Ganancias Moto: **$4.200~$6.000/hora** | **$37.800~$54.000/día** | **$189.000~$270.000/semana** | **$756.000~$1.080.000/mes**
-• Ganancias Bici: **$3.200~$4.800/hora** | **$28.800~$43.200/día** | **$144.000~$216.000/semana** | **$576.000~$864.000/mes**
-• Tarifas: Base entrega $2.200, Bono km +$550/km, Express +$1.800, Horario punta +20%.
-
-SALAS DISPONIBLES (con links de inscripción):
-• **Lider Quilicura** — Av. Ohiggins 314, Quilicura → Inscríbete aquí: [Postular a Lider Quilicura](https://docs.google.com/forms/d/e/1FAIpQLSfuVAAIat0F9nPEFrdLGoVpcKUcmJRVOfP6sh0tD8JqQBIqPA/viewform)
-• **Lider Cordillera** — Av. Los Toros 05441, Puente Alto → Inscríbete aquí: [Postular a Lider Cordillera](https://docs.google.com/forms/d/e/1FAIpQLSeRQ8CaekK0aD3HTmdnWVViYCyxSyEp4X4gtj2tm-FIiJ2_Zw/viewform)
-
-PROCESO DE POSTULACIÓN:
-1. Elige tu rol (Picker, Shopper o Driver)
-2. Revisa los requisitos
-3. Haz clic en "Inscribirme" en la sala que te interese
-4. Completa el formulario
-5. Te contactaremos por WhatsApp con los próximos pasos
-
-DATOS GENERALES:
-• Montos brutos y referenciales.
-• Pagos semanales (día depende de la sala).
-• Tú eliges tus horarios y turnos.
-• Iniciación de actividades en SII es obligatoria.
-
-PREGUNTAS FRECUENTES (FAQ):
-
-Picker:
-P: ¿Cuánto tardo en empezar como Picker?
-R: Menos de 24 horas tras completar registro y capacitación.
-P: ¿Cómo y cuándo recibo mis pagos?
-R: Pagos semanales. El día depende de la sala.
-P: ¿Necesito experiencia previa?
-R: No. En sala te harán una inducción.
-P: ¿Puedo elegir mis horarios?
-R: Sí, eliges turnos según cupos disponibles.
-P: ¿Qué es el Bundle de Conectividad?
-R: Es el monto mínimo que puedes ganar en sala cumpliendo requisitos.
-
-Shopper:
-P: ¿Cuánto tardo en empezar como Shopper?
-R: Menos de 24 horas tras capacitación y verificación de documentos del vehículo.
-P: ¿Cómo y cuándo recibo mis pagos?
-R: Pagos semanales. El día depende de la sala.
-P: ¿Puedo elegir mis horarios?
-R: Sí, eliges los turnos que más te acomoden según cupos.
-P: ¿Qué pasa si no tengo licencia al día?
-R: La licencia vigente es obligatoria para auto/moto. Puedes operar en bicicleta sin licencia.
-
-Driver:
-P: ¿Cómo y cuándo recibo mis pagos?
-R: Pagos semanales. El día depende de la sala.
-P: ¿Puedo elegir mis horarios y zonas?
-R: Sí, eliges turnos y zonas según cupos disponibles.
-
-${typeof CHATBOT_FAQ_EXTRA === "string" ? "CONTEXTO ADICIONAL (FAQ EXTRA):\\n" + CHATBOT_FAQ_EXTRA : ""}`;
+// CHATBOT_SYSTEM_PROMPT se carga desde chatbot-prompt.js
 
 /* ── Formatea markdown ligero a HTML para mensajes del bot ── */
 function formatBotMessage(text) {
