@@ -183,17 +183,17 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      padding: 0 6px;
+      padding: 0 30px 0 6px;
     }
     .timeline-track::before {
       content: "";
       position: absolute;
       top: 20px;
       left: 40px;
-      right: 40px;
+      right: 22px;
       height: 3px;
-      background: linear-gradient(90deg, var(--blue-light), var(--blue), var(--blue-light));
-      border-radius: 2px;
+      background: linear-gradient(90deg, var(--blue-light), var(--blue));
+      border-radius: 2px 0 0 2px;
       z-index: 0;
     }
     .tl-node {
@@ -277,15 +277,16 @@
       height: 38px;
       border-radius: 6px;
     }
-    /* Arrow at end of timeline */
+    /* Arrow at end of timeline line */
     .tl-arrow {
-      display: flex;
-      align-items: center;
-      padding-top: 2px;
-      flex-shrink: 0;
-    }
-    .tl-arrow svg {
-      width: 28px; height: 28px;
+      position: absolute;
+      top: 14px; /* center on the 3px line at top:20px → 20 - 6 = 14 */
+      right: 10px;
+      width: 0; height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 12px solid var(--blue);
+      z-index: 1;
     }
     /* Action buttons in detail panel */
     .tl-detail-actions {
@@ -3666,12 +3667,8 @@ function Timeline({ sheetVideos, onPlayVideo }) {
               <div className="tl-label">{step.label}</div>
             </div>
           ))}
-          {/* Flecha final */}
-          <div className="tl-arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </div>
+          {/* Flecha final de la línea */}
+          <div className="tl-arrow"></div>
         </div>
 
         {active && (
