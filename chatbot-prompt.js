@@ -93,8 +93,8 @@ PRIMEROS PASOS PARA SER ZUBALERO (proceso de registro completo):
 
 **Paso 1: Descargar la app**
 Descarga la app de Zubale para comenzar tu proceso de registro.
-• App Store (iPhone): https://apps.apple.com/cl/app/zubale/id1478946067
-• Google Play (Android): https://play.google.com/store/apps/details?id=com.zubale.shopper
+• Google Play (Android): https://play.google.com/store/apps/details?id=mx.com.topup&pcampaignid=web_share
+• App Store (iPhone): https://apps.apple.com/cl/app/zubale/id1403846238
 
 **Paso 2: Completar tu usuario**
 Al ingresar a la app de Zubale deberás completar tu perfil y subir los documentos solicitados.

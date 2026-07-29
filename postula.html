@@ -2594,6 +2594,18 @@ function driveToPreviewUrl(link) {
   return null;
 }
 
+/* Extrae file ID de Drive y devuelve URL directa de imagen en alta calidad */
+function driveToDirectImageUrl(link) {
+  if (!link) return null;
+  const s = String(link).trim();
+  if (!s) return null;
+  let m = s.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (!m) m = s.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m) return `https://lh3.googleusercontent.com/d/${m[1]}=s1600`;
+  if (s.startsWith("http")) return s;
+  return null;
+}
+
 /* Centros aproximados por región (para centrar el mapa) */
 const REGION_CENTERS = {
   "metropolitana": { center: [-33.45, -70.67], zoom: 11 },
@@ -3668,11 +3680,11 @@ function Timeline({ sheetVideos, onPlayVideo }) {
             <div className="tl-detail-text">{active.text}</div>
             {active.appLinks && (
               <div className="app-btns">
-                <a href="https://play.google.com/store/apps/details?id=com.zubale.repartidor" target="_blank" rel="noopener noreferrer">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" />
+                <a href="https://play.google.com/store/apps/details?id=mx.com.topup&pcampaignid=web_share" target="_blank" rel="noopener noreferrer">
+                  <img src="https://mxb2c.zubale.com/wp-content/uploads/2023/10/google-play-esp-1.png" alt="Google Play" />
                 </a>
-                <a href="https://apps.apple.com/app/zubale/id1478219498" target="_blank" rel="noopener noreferrer">
-                  <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="App Store" />
+                <a href="https://apps.apple.com/cl/app/zubale/id1403846238" target="_blank" rel="noopener noreferrer">
+                  <img src="https://mxb2c.zubale.com/wp-content/uploads/2023/10/app-store-esp-1.png" alt="App Store" />
                 </a>
               </div>
             )}
@@ -3702,11 +3714,10 @@ function Timeline({ sheetVideos, onPlayVideo }) {
               <button className="tarifa-close-btn" onClick={() => setViewImage(null)} aria-label="Cerrar">×</button>
             </div>
             <div className="tarifa-img-wrap">
-              <iframe
-                src={driveToPreviewUrl(viewImage.link) || viewImage.link}
-                style={{ width: "100%", height: "75vh", border: "none", display: "block" }}
-                allow="autoplay"
-                sandbox="allow-scripts allow-same-origin"
+              <img
+                src={driveToDirectImageUrl(viewImage.link) || viewImage.link}
+                alt={viewImage.titulo}
+                style={{ width: "100%", maxHeight: "80vh", objectFit: "contain", display: "block", background: "#fff" }}
               />
             </div>
           </div>
