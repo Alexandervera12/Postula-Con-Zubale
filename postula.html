@@ -4165,6 +4165,56 @@ async function cargarPromptCustom() {
   }
 }
 
+/* ── Cargar FAQs desde Sheet ── */
+var _faqsCache = [];
+async function cargarFAQsDesdeSheet() {
+  try {
+    const url = GAS_URL + (GAS_URL.includes("?") ? "&" : "?") + "sheet=FAQs";
+    const res = await fetch(url);
+    const rows = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0) return [];
+    const faqs = [];
+    for (const r of rows) {
+      const kP = findKey(r, "pregunta", "question");
+      const kR = findKey(r, "respuesta", "answer");
+      const kK = findKey(r, "keywords", "keyword");
+      const pregunta = kP ? String(r[kP] || "").trim() : "";
+      const respuesta = kR ? String(r[kR] || "").trim() : "";
+      const keywords = kK ? String(r[kK] || "").trim().toLowerCase() : "";
+      if (pregunta && respuesta) faqs.push({ pregunta, respuesta, keywords });
+    }
+    _faqsCache = faqs;
+    return faqs;
+  } catch (e) {
+    return [];
+  }
+}
+
+function buscarFAQsRelevantes(texto, maxResults) {
+  if (!_faqsCache.length) return "";
+  maxResults = maxResults || 8;
+  var words = texto.toLowerCase().replace(/[^a-záéíóúñü\s]/g, "").split(/\s+/).filter(function(w) { return w.length > 2; });
+  var stopwords = ["que","como","donde","cuando","cual","los","las","del","por","para","con","una","uno","the","hola","buenas","quiero","puedo","puede","tengo","saber","hacer","hay"];
+  words = words.filter(function(w) { return stopwords.indexOf(w) === -1; });
+  if (words.length === 0) return "";
+  var scored = _faqsCache.map(function(faq) {
+    var score = 0;
+    var src = (faq.pregunta + " " + faq.keywords).toLowerCase();
+    for (var i = 0; i < words.length; i++) {
+      if (src.indexOf(words[i]) !== -1) score++;
+    }
+    return { faq: faq, score: score };
+  }).filter(function(item) { return item.score > 0; });
+  scored.sort(function(a, b) { return b.score - a.score; });
+  var top = scored.slice(0, maxResults);
+  if (top.length === 0) return "";
+  var txt = "\n\nFAQs RELEVANTES (usa estas respuestas como referencia, adaptandolas a tu tono):\n\n";
+  top.forEach(function(item) {
+    txt += "P: " + item.faq.pregunta + "\nR: " + item.faq.respuesta + "\n\n";
+  });
+  return txt;
+}
+
 /* ── Detectar rol mencionado en texto ── */
 function detectarRol(text) {
   const t = text.toLowerCase();
@@ -4218,6 +4268,7 @@ function ChatBot() {
   const sessionTracked = useRef(false);
 
   useEffect(() => {
+    cargarFAQsDesdeSheet();
     Promise.all([cargarSalasParaPrompt(), cargarPromptCustom()]).then(([salasCtx, customPrompt]) => {
       let prompt = customPrompt || (typeof CHATBOT_SYSTEM_PROMPT !== "undefined" ? CHATBOT_SYSTEM_PROMPT : "");
       if (salasCtx) {
@@ -4321,7 +4372,9 @@ function ChatBot() {
     if (rolDetected) trackMetrica("rol_consultado", rolDetected);
 
     try {
-      const systemPrompt = dynamicPrompt || (typeof CHATBOT_SYSTEM_PROMPT !== "undefined" ? CHATBOT_SYSTEM_PROMPT : "");
+      var basePrompt = dynamicPrompt || (typeof CHATBOT_SYSTEM_PROMPT !== "undefined" ? CHATBOT_SYSTEM_PROMPT : "");
+      var faqCtx = buscarFAQsRelevantes(text);
+      const systemPrompt = basePrompt + faqCtx;
       const apiMessages = [
         { role: "system", content: systemPrompt },
         ...newMessages
