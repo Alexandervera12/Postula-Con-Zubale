@@ -27,7 +27,7 @@ EJEMPLO DE RESPUESTA IDEAL (cuando preguntan por un rol):
 "🛍️ Para ser **Shopper** necesitas:
 
 • Teléfono Android
-• Vehículo (auto, moto o bici)
+• Vehículo (auto o moto)
 • Licencia de conducir vigente (auto/moto)
 • Mayor de edad
 • Cédula al día
@@ -36,7 +36,6 @@ EJEMPLO DE RESPUESTA IDEAL (cuando preguntan por un rol):
 **Ganancias** (dependen del vehículo):
 • Auto: **$5.500~$7.500/hora**
 • Moto: **$4.500~$6.500/hora**
-• Bici: **$3.500~$5.000/hora**
 
 Postula ahora en una de nuestras salas:
 • [Postular a Lider Quilicura](URL)
@@ -70,19 +69,17 @@ Selecciona, ordena y empaqueta productos en tienda, dejando el pedido listo para
 • No requiere experiencia previa.
 
 **SHOPPER** 🛍️
-Compra en tienda y entrega al domicilio del cliente (auto, moto o bici).
-• Requisitos: Teléfono Android, vehículo, licencia vigente (auto/moto), mayor de edad, cédula al día, Iniciación SII, Cooler y Gelpacks.
+Compra en tienda y entrega al domicilio del cliente (auto o moto).
+• Requisitos: Teléfono Android, vehículo (auto o moto), licencia vigente (auto/moto), mayor de edad, cédula al día, Iniciación SII. En caso de optar por salas Líder o Acuenta, se debe contar con cooler y 12 gelpacks (se puede usar uno propio genérico sin marcas o adquirir uno en sala).
 • Ganancias Auto: **$5.500~$7.500/hora** | **$49.500~$67.500/día** | **$247.500~$337.500/semana** | **$990.000~$1.350.000/mes**
 • Ganancias Moto: **$4.500~$6.500/hora** | **$40.500~$58.500/día** | **$202.500~$292.500/semana** | **$810.000~$1.170.000/mes**
-• Ganancias Bici: **$3.500~$5.000/hora** | **$31.500~$45.000/día** | **$157.500~$225.000/semana** | **$630.000~$900.000/mes**
 • Tarifas: Hora regular $7.000, Hora punta $9.000, Bono entrega +$2.500, Bono km +$450/km.
 
 **DRIVER** 🚙
 Retira pedido listo en tienda y lo lleva al domicilio del cliente.
-• Requisitos: Vehículo, documentación al día, teléfono Android, mayor de edad, cédula al día, Iniciación SII, Cooler y Gelpacks.
+• Requisitos: Vehículo, documentación al día, teléfono Android, mayor de edad, cédula al día, Iniciación SII. En caso de optar por salas Líder o Acuenta, se debe contar con cooler y 12 gelpacks (se puede usar uno propio genérico sin marcas o adquirir uno en sala).
 • Ganancias Auto: **$5.000~$7.000/hora** | **$45.000~$63.000/día** | **$225.000~$315.000/semana** | **$900.000~$1.260.000/mes**
 • Ganancias Moto: **$4.200~$6.000/hora** | **$37.800~$54.000/día** | **$189.000~$270.000/semana** | **$756.000~$1.080.000/mes**
-• Ganancias Bici: **$3.200~$4.800/hora** | **$28.800~$43.200/día** | **$144.000~$216.000/semana** | **$576.000~$864.000/mes**
 • Tarifas: Base entrega $2.200, Bono km +$550/km, Express +$1.800, Horario punta +20%.
 
 SALAS DISPONIBLES (con links de inscripción):
@@ -156,10 +153,14 @@ R: Pagos semanales. El día depende de la sala.
 P: ¿Puedo elegir mis horarios?
 R: Sí, eliges los turnos que más te acomoden según cupos.
 P: ¿Qué pasa si no tengo licencia al día?
-R: La licencia vigente es obligatoria para auto/moto. Puedes operar en bicicleta sin licencia.
+R: La licencia vigente es obligatoria para auto/moto.
+P: ¿En qué salas puedo ser Shopper con Moto?
+R: En todas las salas de Líder puedes tomar citas como Shopper con Moto.
 
 Driver:
 P: ¿Cómo y cuándo recibo mis pagos?
 R: Pagos semanales. El día depende de la sala.
 P: ¿Puedo elegir mis horarios y zonas?
-R: Sí, eliges turnos y zonas según cupos disponibles.`;
+R: Sí, eliges turnos y zonas según cupos disponibles.
+P: ¿En qué salas puedo repartir como Driver con Moto?
+R: Puedes tomar pedidos como driver con moto en las salas Jumbo Independencia, Jumbo La Florida y Jumbo Ñuñoa. También puedes tomar citas con moto en Zubale Zonas para el sector en Región Metropolitana de Santiago de La Florida o Providencia.`;

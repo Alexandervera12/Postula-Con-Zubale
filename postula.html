@@ -2443,13 +2443,13 @@ const ROLES = {
     descripcion: "Un shopper prepara el pedido dentro de la tienda, lo empaqueta y luego lo entrega en el domicilio del cliente utilizando su auto o moto. Puedes encontrar disponibilidad como shopper en salas Lider, Acuenta, Alvi o Unimarc",
     requisitos: [
       "Teléfono Android",
-      "Vehículo (auto o moto) o bicicleta",
+      "Vehículo (auto o moto)",
       "Licencia de conducir vigente - Si operas en auto o moto",
       "Ser mayor de edad",
       "Cédula de identidad al día",
       "Iniciación de actividades en Servicios de Impuestos Internos (SII)",
       "Ser titular de una cuenta bancaria",
-      "Cooler y Gelpacks",
+      "En caso de optar por salas Líder o Acuenta, se debe contar con cooler y 12 gelpacks. Se puede usar uno propio que sea genérico y sin marcas o se puede adquirir uno en sala.",
     ],
     ganancias: [
       { label: "Por Hora",      value: "$5.500 ~ $7.500" },
@@ -2477,16 +2477,6 @@ const ROLES = {
           { label: "Mensual",                             value: "$967.500 ~ $1.354.000" },
         ],
       },
-      {
-        nombre: "Bici",
-        emoji: "🚲",
-        ganancias: [
-          { label: "Por Hora",                            value: "$4.500 ~ $6.500" },
-          { label: "Por Día (aprox 9 hrs diarias)",       value: "$40.500 ~ $58.500" },
-          { label: "Semanalmente (considerando 5 días)",  value: "$202.500 ~ $292.500" },
-          { label: "Mensual",                             value: "$870.750 ~ $1.257.000" },
-        ],
-      },
     ],
     tarifa: {
       title: "Tarifas – Shopper",
@@ -2508,6 +2498,8 @@ const ROLES = {
         a: "Totalmente. Tú eliges los turnos que más te acomoden según los cupos disponibles en cada sala." },
       { q: "¿Que es el Bundle de Conectividad?",
         a: "El Bundle de conectividad es el monto minimo que puedes ganar en sala, cumpliendo con los requisitos." },
+      { q: "¿En qué salas puedo ser Shopper con Moto?",
+        a: "En todas las salas de Líder puedes tomar citas como Shopper con Moto" },
     ],
     videoYT: null, // ← Pega aquí el ID del video de YouTube para Shopper
   },
@@ -2524,7 +2516,7 @@ const ROLES = {
       "Cédula de identidad al día",
       "Ser titular de una cuenta bancaria",
       "Iniciación de actividades en Servicios de Impuestos Internos (SII)",
-      "Cooler y Gelpacks",
+      "En caso de optar por salas Líder o Acuenta, se debe contar con cooler y 12 gelpacks. Se puede usar uno propio que sea genérico y sin marcas o se puede adquirir uno en sala.",
     ],
     ganancias: [
       { label: "Por Hora",      value: "$5.000 ~ $7.000" },
@@ -2552,16 +2544,6 @@ const ROLES = {
           { label: "Mensual",                             value: "$870.750 ~ $1.257.000" },
         ],
       },
-      {
-        nombre: "Bici",
-        emoji: "🚲",
-        ganancias: [
-          { label: "Por Hora",                            value: "$4.000 ~ $6.000" },
-          { label: "Por Día (aprox 9 hrs diarias)",       value: "$36.000 ~ $54.000" },
-          { label: "Semanalmente (considerando 5 días)",  value: "$180.000 ~ $270.000" },
-          { label: "Mensual",                             value: "$774.000 ~ $1.161.000" },
-        ],
-      },
     ],
     tarifa: {
       title: "Tarifas – Driver",
@@ -2581,6 +2563,8 @@ const ROLES = {
         a: "Sí. Tú eliges los turnos y zonas que más te acomoden dentro de los cupos disponibles." },
       { q: "¿Que es el Bundle de Conectividad?",
         a: "El Bundle de conectividad es el monto minimo que puedes ganar en sala, cumpliendo con los requisitos." },
+      { q: "¿En qué salas puedo repartir como Driver con Moto?",
+        a: "Puedes tomar pedidos como driver con moto en las salas Jumbo Independencia, Jumbo La Florida y Jumbo Ñuñoa. También puedes tomar citas con moto en Zubale Zonas para el sector en Región Metropolitana de Santiago de La Florida o Providencia" },
     ],
     videoYT: null, // ← Pega aquí el ID del video de YouTube para Driver
   },
