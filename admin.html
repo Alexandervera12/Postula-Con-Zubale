@@ -5,127 +5,211 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Panel Admin — Zubale Chatbot</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --blue: #0a1a6b;
-    --blue-light: #1557D6;
+    --blue: #0B3BAA;
+    --blue2: #1557D6;
+    --blue-light: #1B4FFF;
     --orange: #FF6B35;
-    --bg: #f5f7fa;
+    --bg: #f0f4f8;
     --card: #ffffff;
     --text: #1e293b;
     --muted: #64748b;
     --border: #e2e8f0;
-    --radius: 12px;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(11,59,170,0.08);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
   }
+
   .topbar {
-    background: var(--blue);
+    background: linear-gradient(135deg, #0B3BAA 0%, #1557D6 55%, #1B4FFF 100%);
     color: #fff;
-    padding: 16px 24px;
+    padding: 0 32px;
+    height: 64px;
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
   }
-  .topbar img { height: 28px; }
-  .topbar h1 { font-size: 18px; font-weight: 600; }
-  .topbar .back-link { color: #fff; text-decoration: none; font-size: 14px; margin-left: auto; opacity: 0.8; }
-  .topbar .back-link:hover { opacity: 1; }
+  .topbar::before {
+    content: "";
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .topbar::after {
+    content: "";
+    position: absolute;
+    bottom: -60px; left: 30%;
+    width: 300px; height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .topbar img { height: 30px; position: relative; z-index: 1; }
+  .topbar h1 { font-size: 17px; font-weight: 600; position: relative; z-index: 1; letter-spacing: -0.3px; }
+  .topbar .back-link {
+    color: #fff; text-decoration: none; font-size: 13px; font-weight: 500;
+    margin-left: auto; position: relative; z-index: 1;
+    background: rgba(255,255,255,0.15); padding: 6px 16px; border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .topbar .back-link:hover { background: rgba(255,255,255,0.25); }
 
   .login-screen {
     display: flex; align-items: center; justify-content: center;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 64px);
+    background: linear-gradient(180deg, #e8eef6 0%, var(--bg) 100%);
   }
   .login-card {
     background: var(--card); border-radius: var(--radius);
-    padding: 40px; max-width: 380px; width: 100%;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    text-align: center;
+    padding: 48px 40px; max-width: 400px; width: 90%;
+    box-shadow: var(--shadow); text-align: center;
   }
-  .login-card h2 { margin-bottom: 8px; color: var(--blue); }
-  .login-card p { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+  .login-card .login-icon {
+    width: 56px; height: 56px; border-radius: 16px;
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 24px; color: #fff;
+  }
+  .login-card h2 { margin-bottom: 6px; color: var(--blue); font-size: 22px; font-weight: 700; }
+  .login-card p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
   .login-card input {
-    width: 100%; padding: 12px 16px; border: 1px solid var(--border);
-    border-radius: 8px; font-size: 15px; margin-bottom: 16px;
+    width: 100%; padding: 14px 18px; border: 2px solid var(--border);
+    border-radius: 12px; font-size: 15px; margin-bottom: 16px;
+    font-family: inherit; transition: border-color 0.2s;
   }
+  .login-card input:focus { outline: none; border-color: var(--blue2); }
   .login-card button {
-    width: 100%; padding: 12px; background: var(--blue); color: #fff;
-    border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer;
+    width: 100%; padding: 14px; font-family: inherit;
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+    color: #fff; border: none; border-radius: 12px; font-size: 15px;
+    font-weight: 600; cursor: pointer; transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(21,87,214,0.3);
   }
-  .login-card button:hover { background: var(--blue-light); }
-  .login-error { color: #dc2626; font-size: 13px; margin-bottom: 12px; }
+  .login-card button:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(21,87,214,0.4); }
+  .login-card button:active { transform: translateY(0); }
+  .login-error { color: #dc2626; font-size: 13px; margin-bottom: 12px; font-weight: 500; }
 
-  .dashboard { padding: 24px; max-width: 1200px; margin: 0 auto; }
-  .tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--card); border-radius: var(--radius); padding: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .dashboard { padding: 28px; max-width: 1240px; margin: 0 auto; }
+
+  .tabs {
+    display: flex; gap: 4px; margin-bottom: 28px;
+    background: var(--card); border-radius: 14px; padding: 5px;
+    box-shadow: var(--shadow);
+  }
   .tab-btn {
-    flex: 1; padding: 10px 16px; border: none; background: transparent;
-    border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;
-    color: var(--muted); transition: all 0.2s;
+    flex: 1; padding: 12px 16px; border: none; background: transparent;
+    border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
+    color: var(--muted); transition: all 0.25s; font-family: inherit;
   }
-  .tab-btn.active { background: var(--blue); color: #fff; }
+  .tab-btn:hover { color: var(--blue2); background: rgba(21,87,214,0.05); }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+    color: #fff; box-shadow: 0 4px 12px rgba(21,87,214,0.25);
+  }
 
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .stat-card {
-    background: var(--card); border-radius: var(--radius); padding: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px; margin-bottom: 24px;
   }
-  .stat-label { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
-  .stat-value { font-size: 28px; font-weight: 700; color: var(--blue); }
-  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .stat-card {
+    background: var(--card); border-radius: var(--radius); padding: 24px;
+    box-shadow: var(--shadow); border-left: 4px solid var(--blue2);
+    transition: transform 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-card:nth-child(2) { border-left-color: var(--orange); }
+  .stat-card:nth-child(3) { border-left-color: #10b981; }
+  .stat-card:nth-child(4) { border-left-color: #8b5cf6; }
+  .stat-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .stat-value { font-size: 32px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
   .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
   .chart-card {
-    background: var(--card); border-radius: var(--radius); padding: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    background: var(--card); border-radius: var(--radius); padding: 24px;
+    box-shadow: var(--shadow);
   }
-  .chart-card h3 { font-size: 15px; margin-bottom: 12px; color: var(--text); }
+  .chart-card h3 { font-size: 14px; margin-bottom: 16px; color: var(--text); font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
 
   .table-card {
-    background: var(--card); border-radius: var(--radius); padding: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 24px; overflow-x: auto;
+    background: var(--card); border-radius: var(--radius); padding: 24px;
+    box-shadow: var(--shadow); margin-bottom: 24px; overflow-x: auto;
   }
-  .table-card h3 { font-size: 15px; margin-bottom: 12px; }
+  .table-card h3 { font-size: 14px; margin-bottom: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
   .table-card table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  .table-card th { background: var(--bg); padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
-  .table-card td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
-  .table-card tr:hover td { background: #f8fafc; }
+  .table-card th {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+    color: #fff; padding: 12px 16px; text-align: left; font-weight: 600;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .table-card th:first-child { border-radius: 10px 0 0 0; }
+  .table-card th:last-child { border-radius: 0 10px 0 0; }
+  .table-card td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .table-card tr:hover td { background: #f0f4ff; }
+  .table-card tr:last-child td { border-bottom: none; }
 
   .prompt-editor {
-    background: var(--card); border-radius: var(--radius); padding: 24px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 24px;
+    background: var(--card); border-radius: var(--radius); padding: 28px;
+    box-shadow: var(--shadow); margin-bottom: 24px;
   }
-  .prompt-editor h3 { font-size: 16px; margin-bottom: 8px; }
-  .prompt-editor p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .prompt-editor h3 { font-size: 16px; margin-bottom: 8px; font-weight: 700; }
+  .prompt-editor p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
   .prompt-editor textarea {
-    width: 100%; min-height: 400px; padding: 16px; border: 1px solid var(--border);
-    border-radius: 8px; font-family: "Fira Code", "Consolas", monospace; font-size: 13px;
-    line-height: 1.5; resize: vertical;
+    width: 100%; min-height: 400px; padding: 18px; border: 2px solid var(--border);
+    border-radius: 12px; font-family: "Fira Code", "Consolas", monospace; font-size: 13px;
+    line-height: 1.6; resize: vertical; transition: border-color 0.2s;
   }
-  .prompt-actions { display: flex; gap: 12px; margin-top: 16px; align-items: center; }
+  .prompt-editor textarea:focus { outline: none; border-color: var(--blue2); }
+  .prompt-actions { display: flex; gap: 12px; margin-top: 20px; align-items: center; }
   .prompt-actions button {
-    padding: 10px 24px; border: none; border-radius: 8px; font-size: 14px;
-    font-weight: 600; cursor: pointer;
+    padding: 12px 28px; border: none; border-radius: 10px; font-size: 14px;
+    font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s;
   }
-  .btn-primary { background: var(--blue); color: #fff; }
-  .btn-primary:hover { background: var(--blue-light); }
-  .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border) !important; }
-  .save-status { font-size: 13px; color: #16a34a; }
-  .save-error { font-size: 13px; color: #dc2626; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue2) 100%);
+    color: #fff; box-shadow: 0 4px 12px rgba(21,87,214,0.25);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(21,87,214,0.35); }
+  .btn-primary:disabled { opacity: 0.5; cursor: default; transform: none; box-shadow: none; }
+  .btn-secondary { background: var(--bg); color: var(--text); border: 2px solid var(--border) !important; }
+  .btn-secondary:hover { border-color: var(--blue2) !important; color: var(--blue2); }
+  .save-status { font-size: 13px; color: #10b981; font-weight: 600; }
+  .save-error { font-size: 13px; color: #dc2626; font-weight: 600; }
 
-  .loading-state { text-align: center; padding: 60px; color: var(--muted); }
-  .spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .loading-state { text-align: center; padding: 80px; color: var(--muted); }
+  .spinner {
+    display: inline-block; width: 40px; height: 40px;
+    border: 4px solid var(--border); border-top-color: var(--blue2);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state {
+    text-align: center; padding: 48px 20px; color: var(--muted);
+  }
+  .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-state p { font-size: 14px; }
 
   @media (max-width: 768px) {
     .charts-grid { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
     .dashboard { padding: 16px; }
+    .topbar { padding: 0 16px; }
+    .login-card { padding: 36px 28px; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -133,15 +217,15 @@
 <div class="topbar">
   <img src="https://www.zubale.com/cl/wp-content/uploads/2023/12/logo_zubale_2023.png" alt="Zubale" />
   <h1>Panel Admin — Chatbot</h1>
-  <a class="back-link" href="postula.html">← Volver a la página</a>
+  <a class="back-link" href="postula.html">← Volver a la pagina</a>
 </div>
 <div id="app"></div>
 
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyznjxIn99mewSPEBf3rEMMsI_7mGneJo5rf3HT9gk_HhdKweUSM0m5vSgVHKKkN3gE/exec";
-const ADMIN_PASS = "zubale2024";
+var GAS_URL = "https://script.google.com/macros/s/AKfycbyznjxIn99mewSPEBf3rEMMsI_7mGneJo5rf3HT9gk_HhdKweUSM0m5vSgVHKKkN3gE/exec";
+var ADMIN_PASS = "zubale2024";
 
-let state = {
+var state = {
   loggedIn: false,
   tab: "metricas",
   metricas: null,
@@ -157,29 +241,22 @@ function setState(partial) {
   render();
 }
 
-async function gasPost(body) {
-  const res = await fetch(GAS_URL, {
+function gasPost(body) {
+  return fetch(GAS_URL, {
     method: "POST",
     headers: { "Content-Type": "text/plain" },
     body: JSON.stringify(body),
-  });
-  return res.json();
+  }).then(function(r) { return r.json(); });
 }
 
-async function gasGet(sheet) {
-  const url = GAS_URL + (GAS_URL.includes("?") ? "&" : "?") + "sheet=" + sheet;
-  const res = await fetch(url);
-  return res.json();
-}
-
-async function loadData() {
+function loadData() {
   setState({ loading: true });
-  try {
-    const [metricas, registros, configRes] = await Promise.all([
-      gasPost({ action: "leer_metricas" }),
-      gasPost({ action: "leer_registros" }),
-      gasPost({ action: "leer_config", clave: "system_prompt" }),
-    ]);
+  Promise.all([
+    gasPost({ action: "leer_metricas" }),
+    gasPost({ action: "leer_registros" }),
+    gasPost({ action: "leer_config", clave: "system_prompt" }),
+  ]).then(function(results) {
+    var metricas = results[0], registros = results[1], configRes = results[2];
     setState({
       metricas: Array.isArray(metricas) ? metricas : [],
       registros: Array.isArray(registros) ? registros : [],
@@ -187,173 +264,175 @@ async function loadData() {
       promptOriginal: configRes.valor || "",
       loading: false,
     });
-  } catch (e) {
+  }).catch(function(e) {
     console.error("Error cargando datos:", e);
     setState({ metricas: [], registros: [], loading: false });
-  }
+  });
 }
 
-async function savePrompt() {
+function savePrompt() {
   setState({ saveStatus: "guardando" });
-  try {
-    await gasPost({ action: "guardar_config", clave: "system_prompt", valor: state.prompt });
-    setState({ saveStatus: "ok", promptOriginal: state.prompt });
-    setTimeout(() => setState({ saveStatus: "" }), 3000);
-  } catch (e) {
-    setState({ saveStatus: "error" });
-  }
+  gasPost({ action: "guardar_config", clave: "system_prompt", valor: state.prompt })
+    .then(function() {
+      setState({ saveStatus: "ok", promptOriginal: state.prompt });
+      setTimeout(function() { setState({ saveStatus: "" }); }, 3000);
+    })
+    .catch(function() { setState({ saveStatus: "error" }); });
 }
 
 function processMetrics(metricas) {
-  const totalSessions = new Set(metricas.filter(m => m.tipo === "sesion_abierta").map(m => m.sesion)).size;
-  const preguntas = metricas.filter(m => m.tipo === "pregunta");
-  const totalPreguntas = preguntas.length;
-  const rolesData = metricas.filter(m => m.tipo === "rol_consultado");
-  const regIniciados = metricas.filter(m => m.tipo === "registro_iniciado").length;
-  const regCompletados = metricas.filter(m => m.tipo === "registro_completado").length;
+  var sessions = {};
+  var preguntas = [];
+  var rolesData = [];
+  var regIniciados = 0;
+  var regCompletados = 0;
+  var hourCount = {};
+  var dayCount = {};
 
-  const roleCount = {};
-  rolesData.forEach(m => { roleCount[m.valor] = (roleCount[m.valor] || 0) + 1; });
+  metricas.forEach(function(m) {
+    if (m.tipo === "sesion_abierta") {
+      sessions[m.sesion] = true;
+      if (m.fecha) {
+        try {
+          var d = new Date(m.fecha);
+          var h = d.getHours();
+          hourCount[h] = (hourCount[h] || 0) + 1;
+          var day = d.toISOString().slice(0, 10);
+          dayCount[day] = (dayCount[day] || 0) + 1;
+        } catch(e) {}
+      }
+    }
+    if (m.tipo === "pregunta") preguntas.push(m);
+    if (m.tipo === "rol_consultado") rolesData.push(m);
+    if (m.tipo === "registro_iniciado") regIniciados++;
+    if (m.tipo === "registro_completado") regCompletados++;
+  });
 
-  const questionFreq = {};
-  preguntas.forEach(m => {
-    const q = String(m.valor || "").toLowerCase().trim().slice(0, 80);
+  var totalSessions = Object.keys(sessions).length;
+  var totalPreguntas = preguntas.length;
+
+  var roleCount = {};
+  rolesData.forEach(function(m) { roleCount[m.valor] = (roleCount[m.valor] || 0) + 1; });
+
+  var questionFreq = {};
+  preguntas.forEach(function(m) {
+    var q = String(m.valor || "").toLowerCase().trim().slice(0, 80);
     if (q.length > 3) questionFreq[q] = (questionFreq[q] || 0) + 1;
   });
-  const topQuestions = Object.entries(questionFreq).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  var topQuestions = Object.entries(questionFreq).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 10);
 
-  const hourCount = {};
-  metricas.forEach(m => {
-    if (m.tipo === "sesion_abierta" && m.fecha) {
-      try {
-        const h = new Date(m.fecha).getHours();
-        hourCount[h] = (hourCount[h] || 0) + 1;
-      } catch(e) {}
-    }
-  });
-
-  const dayCount = {};
-  metricas.forEach(m => {
-    if (m.tipo === "sesion_abierta" && m.fecha) {
-      try {
-        const d = new Date(m.fecha).toISOString().slice(0, 10);
-        dayCount[d] = (dayCount[d] || 0) + 1;
-      } catch(e) {}
-    }
-  });
-  const dailyLabels = Object.keys(dayCount).sort().slice(-14);
-  const dailyValues = dailyLabels.map(d => dayCount[d] || 0);
+  var dailyLabels = Object.keys(dayCount).sort().slice(-14);
+  var dailyValues = dailyLabels.map(function(d) { return dayCount[d] || 0; });
 
   return {
-    totalSessions,
-    totalPreguntas,
-    roleCount,
-    topQuestions,
-    hourCount,
-    regIniciados,
-    regCompletados,
-    dailyLabels,
-    dailyValues,
+    totalSessions: totalSessions,
+    totalPreguntas: totalPreguntas,
+    roleCount: roleCount,
+    topQuestions: topQuestions,
+    hourCount: hourCount,
+    regIniciados: regIniciados,
+    regCompletados: regCompletados,
+    dailyLabels: dailyLabels,
+    dailyValues: dailyValues,
     tasaRegistro: totalSessions > 0 ? ((regCompletados / totalSessions) * 100).toFixed(1) : "0",
   };
 }
 
-let chartInstances = {};
+var chartInstances = {};
 function destroyCharts() {
-  Object.values(chartInstances).forEach(c => { try { c.destroy(); } catch(e) {} });
+  Object.values(chartInstances).forEach(function(c) { try { c.destroy(); } catch(e) {} });
   chartInstances = {};
 }
 
 function renderCharts(stats) {
   destroyCharts();
-  setTimeout(() => {
-    const ctxRol = document.getElementById("chart-roles");
-    if (ctxRol) {
-      const labels = Object.keys(stats.roleCount);
-      const values = Object.values(stats.roleCount);
+  setTimeout(function() {
+    var ctxRol = document.getElementById("chart-roles");
+    if (ctxRol && Object.keys(stats.roleCount).length > 0) {
+      var labels = Object.keys(stats.roleCount);
+      var values = Object.values(stats.roleCount);
       chartInstances.roles = new Chart(ctxRol, {
         type: "doughnut",
         data: {
-          labels,
-          datasets: [{ data: values, backgroundColor: ["#1557D6", "#FF6B35", "#10b981", "#8b5cf6"] }],
+          labels: labels,
+          datasets: [{ data: values, backgroundColor: ["#1557D6", "#FF6B35", "#10b981", "#8b5cf6"], borderWidth: 0 }],
         },
-        options: { responsive: true, plugins: { legend: { position: "bottom" } } },
+        options: { responsive: true, plugins: { legend: { position: "bottom", labels: { font: { family: "Inter", weight: "600" }, padding: 16 } } } },
       });
     }
 
-    const ctxHour = document.getElementById("chart-hours");
+    var ctxHour = document.getElementById("chart-hours");
     if (ctxHour) {
-      const labels = [];
-      const values = [];
-      for (let h = 0; h < 24; h++) {
-        labels.push(h + ":00");
-        values.push(stats.hourCount[h] || 0);
+      var hLabels = [], hValues = [];
+      for (var h = 0; h < 24; h++) {
+        hLabels.push(h + ":00");
+        hValues.push(stats.hourCount[h] || 0);
       }
       chartInstances.hours = new Chart(ctxHour, {
         type: "bar",
         data: {
-          labels,
-          datasets: [{ label: "Sesiones", data: values, backgroundColor: "#1557D6", borderRadius: 4 }],
+          labels: hLabels,
+          datasets: [{ label: "Sesiones", data: hValues, backgroundColor: "rgba(21,87,214,0.7)", borderRadius: 6, borderSkipped: false }],
         },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: "Inter" } } }, x: { ticks: { font: { family: "Inter", size: 10 } } } } },
       });
     }
 
-    const ctxDaily = document.getElementById("chart-daily");
-    if (ctxDaily) {
+    var ctxDaily = document.getElementById("chart-daily");
+    if (ctxDaily && stats.dailyLabels.length > 0) {
       chartInstances.daily = new Chart(ctxDaily, {
         type: "line",
         data: {
-          labels: stats.dailyLabels.map(d => d.slice(5)),
-          datasets: [{ label: "Sesiones/día", data: stats.dailyValues, borderColor: "#1557D6", backgroundColor: "rgba(21,87,214,0.1)", fill: true, tension: 0.3 }],
+          labels: stats.dailyLabels.map(function(d) { return d.slice(5); }),
+          datasets: [{ label: "Sesiones/dia", data: stats.dailyValues, borderColor: "#1557D6", backgroundColor: "rgba(21,87,214,0.08)", fill: true, tension: 0.4, borderWidth: 3, pointBackgroundColor: "#1557D6", pointRadius: 4 }],
         },
-        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: "Inter" } } }, x: { ticks: { font: { family: "Inter", size: 11 } } } } },
       });
     }
-  }, 50);
+  }, 80);
 }
 
 function render() {
-  const app = document.getElementById("app");
+  var app = document.getElementById("app");
 
   if (!state.loggedIn) {
-    app.innerHTML = `
-      <div class="login-screen">
-        <div class="login-card">
-          <h2>Acceso Admin</h2>
-          <p>Ingresa la clave para acceder al panel</p>
-          <div id="login-error" class="login-error" style="display:none"></div>
-          <input type="password" id="pass-input" placeholder="Clave de acceso" />
-          <button id="login-btn">Ingresar</button>
-        </div>
-      </div>
-    `;
-    document.getElementById("login-btn").onclick = () => {
-      const val = document.getElementById("pass-input").value;
+    app.innerHTML =
+      '<div class="login-screen">' +
+        '<div class="login-card">' +
+          '<div class="login-icon">🔒</div>' +
+          '<h2>Acceso Admin</h2>' +
+          '<p>Ingresa la clave para acceder al panel de metricas</p>' +
+          '<div id="login-error" class="login-error" style="display:none"></div>' +
+          '<input type="password" id="pass-input" placeholder="Clave de acceso" />' +
+          '<button id="login-btn">Ingresar</button>' +
+        '</div>' +
+      '</div>';
+    document.getElementById("login-btn").onclick = function() {
+      var val = document.getElementById("pass-input").value;
       if (val === ADMIN_PASS) {
         setState({ loggedIn: true });
         loadData();
       } else {
-        const err = document.getElementById("login-error");
+        var err = document.getElementById("login-error");
         err.textContent = "Clave incorrecta";
         err.style.display = "block";
       }
     };
-    document.getElementById("pass-input").onkeydown = (e) => {
+    document.getElementById("pass-input").onkeydown = function(e) {
       if (e.key === "Enter") document.getElementById("login-btn").click();
     };
-    setTimeout(() => document.getElementById("pass-input")?.focus(), 50);
+    setTimeout(function() { var el = document.getElementById("pass-input"); if (el) el.focus(); }, 50);
     return;
   }
 
   if (state.loading) {
-    app.innerHTML = '<div class="loading-state"><div class="spinner"></div><p style="margin-top:16px">Cargando datos...</p></div>';
+    app.innerHTML = '<div class="loading-state"><div class="spinner"></div><p style="margin-top:20px;font-weight:500">Cargando datos...</p></div>';
     return;
   }
 
-  const stats = processMetrics(state.metricas || []);
+  var stats = processMetrics(state.metricas || []);
+  var html = '<div class="dashboard">';
 
-  let html = '<div class="dashboard">';
   html += '<div class="tabs">';
   html += '<button class="tab-btn' + (state.tab === "metricas" ? " active" : "") + '" data-tab="metricas">Metricas</button>';
   html += '<button class="tab-btn' + (state.tab === "registros" ? " active" : "") + '" data-tab="registros">Registros</button>';
@@ -369,40 +448,52 @@ function render() {
     html += '</div>';
 
     html += '<div class="charts-grid">';
-    html += '<div class="chart-card"><h3>Rol mas consultado</h3><canvas id="chart-roles"></canvas></div>';
+    html += '<div class="chart-card"><h3>Rol mas consultado</h3>';
+    if (Object.keys(stats.roleCount).length > 0) {
+      html += '<canvas id="chart-roles"></canvas>';
+    } else {
+      html += '<div class="empty-state"><div class="empty-icon">📊</div><p>Sin datos aun</p></div>';
+    }
+    html += '</div>';
     html += '<div class="chart-card"><h3>Horarios pico</h3><canvas id="chart-hours"></canvas></div>';
     html += '</div>';
 
-    html += '<div class="chart-card" style="margin-bottom:24px"><h3>Sesiones por dia (ultimos 14 dias)</h3><canvas id="chart-daily"></canvas></div>';
+    html += '<div class="chart-card" style="margin-bottom:24px"><h3>Sesiones por dia (ultimos 14 dias)</h3>';
+    if (stats.dailyLabels.length > 0) {
+      html += '<canvas id="chart-daily"></canvas>';
+    } else {
+      html += '<div class="empty-state"><div class="empty-icon">📈</div><p>Sin datos aun</p></div>';
+    }
+    html += '</div>';
 
     html += '<div class="table-card"><h3>Preguntas mas frecuentes</h3>';
     if (stats.topQuestions.length > 0) {
       html += '<table><thead><tr><th>#</th><th>Pregunta</th><th>Veces</th></tr></thead><tbody>';
-      stats.topQuestions.forEach(([q, c], i) => {
-        html += '<tr><td>' + (i + 1) + '</td><td>' + escapeHtml(q) + '</td><td>' + c + '</td></tr>';
+      stats.topQuestions.forEach(function(item, i) {
+        html += '<tr><td>' + (i + 1) + '</td><td>' + escapeHtml(item[0]) + '</td><td><strong>' + item[1] + '</strong></td></tr>';
       });
       html += '</tbody></table>';
     } else {
-      html += '<p style="color:var(--muted);padding:20px;text-align:center">Aún no hay preguntas registradas</p>';
+      html += '<div class="empty-state"><div class="empty-icon">💬</div><p>Sin preguntas registradas aun</p></div>';
     }
     html += '</div>';
   }
 
   if (state.tab === "registros") {
-    const regs = state.registros || [];
+    var regs = state.registros || [];
     html += '<div class="stats-grid">';
     html += '<div class="stat-card"><div class="stat-label">Total Registros</div><div class="stat-value">' + regs.length + '</div></div>';
-    const conApp = regs.filter(r => String(r.descargo_app || "").toLowerCase().includes("si")).length;
+    var conApp = regs.filter(function(r) { return String(r.descargo_app || "").toLowerCase().indexOf("si") !== -1; }).length;
     html += '<div class="stat-card"><div class="stat-label">Descargaron App</div><div class="stat-value">' + conApp + '</div></div>';
-    const seReg = regs.filter(r => String(r.se_registro || "").toLowerCase().includes("si")).length;
+    var seReg = regs.filter(function(r) { return String(r.se_registro || "").toLowerCase().indexOf("si") !== -1; }).length;
     html += '<div class="stat-card"><div class="stat-label">Se Registraron en App</div><div class="stat-value">' + seReg + '</div></div>';
     html += '</div>';
 
     html += '<div class="table-card"><h3>Registros recientes</h3>';
     if (regs.length > 0) {
       html += '<table><thead><tr><th>Fecha</th><th>Nombre</th><th>RUT</th><th>Telefono</th><th>App</th><th>Registro</th></tr></thead><tbody>';
-      regs.slice().reverse().slice(0, 50).forEach(r => {
-        const fecha = r.fecha ? new Date(r.fecha).toLocaleDateString("es-CL") : "";
+      regs.slice().reverse().slice(0, 50).forEach(function(r) {
+        var fecha = r.fecha ? new Date(r.fecha).toLocaleDateString("es-CL") : "";
         html += '<tr>';
         html += '<td>' + fecha + '</td>';
         html += '<td>' + escapeHtml(r.nombre || "") + '</td>';
@@ -414,24 +505,24 @@ function render() {
       });
       html += '</tbody></table>';
     } else {
-      html += '<p style="color:var(--muted);padding:20px;text-align:center">Aún no hay registros</p>';
+      html += '<div class="empty-state"><div class="empty-icon">📋</div><p>Sin registros aun</p></div>';
     }
     html += '</div>';
   }
 
   if (state.tab === "prompt") {
-    const changed = state.prompt !== state.promptOriginal;
-    let statusHtml = "";
+    var changed = state.prompt !== state.promptOriginal;
+    var statusHtml = "";
     if (state.saveStatus === "guardando") statusHtml = '<span class="save-status">Guardando...</span>';
     else if (state.saveStatus === "ok") statusHtml = '<span class="save-status">Guardado correctamente</span>';
     else if (state.saveStatus === "error") statusHtml = '<span class="save-error">Error al guardar</span>';
 
     html += '<div class="prompt-editor">';
     html += '<h3>System Prompt del Chatbot</h3>';
-    html += '<p>Edita el prompt que usa Zubalin para responder. Los cambios se aplican inmediatamente a nuevas conversaciones. Si dejas este campo vacío, se usará el prompt por defecto del archivo chatbot-prompt.js.</p>';
+    html += '<p>Edita el prompt que usa Zubalin para responder. Los cambios se aplican inmediatamente a nuevas conversaciones. Si dejas este campo vacio, se usara el prompt por defecto del archivo chatbot-prompt.js.</p>';
     html += '<textarea id="prompt-textarea">' + escapeHtml(state.prompt) + '</textarea>';
     html += '<div class="prompt-actions">';
-    html += '<button class="btn-primary" id="save-prompt-btn"' + (changed ? "" : " disabled") + '>Guardar</button>';
+    html += '<button class="btn-primary" id="save-prompt-btn"' + (changed ? "" : " disabled") + '>Guardar cambios</button>';
     html += '<button class="btn-secondary" id="reset-prompt-btn">Restaurar original</button>';
     html += statusHtml;
     html += '</div></div>';
@@ -440,29 +531,25 @@ function render() {
   html += '</div>';
   app.innerHTML = html;
 
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.onclick = () => {
+  document.querySelectorAll(".tab-btn").forEach(function(btn) {
+    btn.onclick = function() {
       destroyCharts();
       setState({ tab: btn.dataset.tab });
       if (btn.dataset.tab === "metricas") {
-        setTimeout(() => renderCharts(processMetrics(state.metricas || [])), 100);
+        setTimeout(function() { renderCharts(processMetrics(state.metricas || [])); }, 100);
       }
     };
   });
 
-  if (state.tab === "metricas") {
-    renderCharts(stats);
-  }
+  if (state.tab === "metricas") renderCharts(stats);
 
   if (state.tab === "prompt") {
-    const ta = document.getElementById("prompt-textarea");
-    if (ta) {
-      ta.oninput = () => { state.prompt = ta.value; render(); };
-    }
-    const saveBtn = document.getElementById("save-prompt-btn");
+    var ta = document.getElementById("prompt-textarea");
+    if (ta) ta.oninput = function() { state.prompt = ta.value; render(); };
+    var saveBtn = document.getElementById("save-prompt-btn");
     if (saveBtn) saveBtn.onclick = savePrompt;
-    const resetBtn = document.getElementById("reset-prompt-btn");
-    if (resetBtn) resetBtn.onclick = () => {
+    var resetBtn = document.getElementById("reset-prompt-btn");
+    if (resetBtn) resetBtn.onclick = function() {
       setState({ prompt: "", saveStatus: "" });
       savePrompt();
     };

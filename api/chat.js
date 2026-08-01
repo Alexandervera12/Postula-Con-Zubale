@@ -1,34 +1,65 @@
 export default async function handler(req, res) {
-  // Solo POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: "GROQ_API_KEY not configured" });
+    return res.status(500).json({ error: "GEMINI_API_KEY not configured" });
   }
 
   try {
-    const { messages, temperature = 0.3, max_tokens = 500 } = req.body;
+    const { messages, temperature = 0.3, max_tokens = 800 } = req.body;
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const contents = [];
+    let systemText = "";
+
+    for (const m of messages) {
+      if (m.role === "system") {
+        systemText = m.content;
+        continue;
+      }
+      contents.push({
+        role: m.role === "assistant" ? "model" : "user",
+        parts: [{ text: m.content }],
+      });
+    }
+
+    if (contents.length > 0 && systemText) {
+      contents[0].parts[0].text = systemText + "\n\n---\n\n" + contents[0].parts[0].text;
+    }
+
+    if (contents.length === 0) {
+      contents.push({ role: "user", parts: [{ text: systemText || "Hola" }] });
+    }
+
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
+
+    const response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages,
-        temperature,
-        max_tokens,
+        contents,
+        generationConfig: {
+          temperature,
+          maxOutputTokens: max_tokens,
+        },
       }),
     });
 
     const data = await response.json();
-    return res.status(response.status).json(data);
+
+    if (data.error) {
+      return res.status(response.status || 500).json({ error: data.error });
+    }
+
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "No pude generar una respuesta.";
+
+    return res.status(200).json({
+      choices: [{ message: { role: "assistant", content: text } }],
+    });
+
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: { message: err.message } });
   }
 }
