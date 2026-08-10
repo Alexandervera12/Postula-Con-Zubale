@@ -2543,6 +2543,22 @@ const ROLES = {
         a: "El Bundle de conectividad es el monto minimo que puedes ganar en sala, cumpliendo con los requisitos." },
     ],
     videoYT: null, // ← Pega aquí el ID del video de YouTube para Picker (ej: "dQw4w9WgXcQ")
+
+    pfrec: [
+      { q: "Me indica que el rut ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que el teléfono ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que la patente ya existe",
+        a: "Se debe solicitar a soporte que deje registrada la patente correctamente" },
+      { q: "No puedo ingresar el código postal",
+        a: "Ya no se solicita el código postal.Puedes tener una versión antigua: prueba actualizando la app e intentando nuevamente." },
+      { q: "No me deja ingresar la fecha de vencimiento",
+        a: "La fecha de vencimiento debe ser una fecha futura, revisa no estar ingresando la fecha de nacimiento" }, 
+      { q: "¿Cómo contactar a soporte?",
+        a: "En caso de poder ingresar a la app, se debe abrir el chat dentro de la burbuja que se encuentra abajo a la derecha de la pantalla. En caso de no poder ingresar a la app, se debe acceder al soporte a través de la burbuja que se encuentra abajo a la derecha de la página web (www.zubalero.com/cl)" },
+      
+    ],
   },
   Shopper: {
     key: "Shopper",
@@ -2610,6 +2626,22 @@ const ROLES = {
         a: "En todas las salas de Líder puedes tomar citas como Shopper con Moto" },
     ],
     videoYT: null, // ← Pega aquí el ID del video de YouTube para Shopper
+   
+    pfrec: [
+      { q: "Me indica que el rut ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que el teléfono ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que la patente ya existe",
+        a: "Se debe solicitar a soporte que deje registrada la patente correctamente" },
+      { q: "No puedo ingresar el código postal",
+        a: "Ya no se solicita el código postal.Puedes tener una versión antigua: prueba actualizando la app e intentando nuevamente." },
+      { q: "No me deja ingresar la fecha de vencimiento",
+        a: "La fecha de vencimiento debe ser una fecha futura, revisa no estar ingresando la fecha de nacimiento" }, 
+      { q: "¿Cómo contactar a soporte?",
+        a: "En caso de poder ingresar a la app, se debe abrir el chat dentro de la burbuja que se encuentra abajo a la derecha de la pantalla. En caso de no poder ingresar a la app, se debe acceder al soporte a través de la burbuja que se encuentra abajo a la derecha de la página web (www.zubalero.com/cl)" },
+      
+    ],
   },
   Driver: {
     key: "Driver",
@@ -2675,6 +2707,22 @@ const ROLES = {
         a: "Puedes tomar pedidos como driver con moto en las salas Jumbo Independencia, Jumbo La Florida y Jumbo Ñuñoa. También puedes tomar citas con moto en Zubale Zonas para el sector en Región Metropolitana de Santiago de La Florida o Providencia" },
     ],
     videoYT: null, // ← Pega aquí el ID del video de YouTube para Driver
+   
+    pfrec: [
+      { q: "Me indica que el rut ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que el teléfono ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que la patente ya existe",
+        a: "Se debe solicitar a soporte que deje registrada la patente correctamente" },
+      { q: "No puedo ingresar el código postal",
+        a: "Ya no se solicita el código postal.Puedes tener una versión antigua: prueba actualizando la app e intentando nuevamente." },
+      { q: "No me deja ingresar la fecha de vencimiento",
+        a: "La fecha de vencimiento debe ser una fecha futura, revisa no estar ingresando la fecha de nacimiento" }, 
+      { q: "¿Cómo contactar a soporte?",
+        a: "En caso de poder ingresar a la app, se debe abrir el chat dentro de la burbuja que se encuentra abajo a la derecha de la pantalla. En caso de no poder ingresar a la app, se debe acceder al soporte a través de la burbuja que se encuentra abajo a la derecha de la página web (www.zubalero.com/cl)" },
+      
+    ],
   },
 };
 
@@ -3745,7 +3793,8 @@ const TIMELINE_STEPS = [
   { icon: "file", label: "Acuerdo e información", title: "Acuerdo e información",
     text: "El día anterior a tu cita de capacitación te llegará un mensaje de recordatorio. Y a tu correo te llegará un acuerdo de prestación de servicios (recuerda revisar Spam). Es importante que lo firmes antes de asistir a tu cita." },
   { icon: "mapPin", label: "Hacer Check-in", title: "Hacer Check-in",
-    text: "Una vez estés en sala, recuerda siempre marcar tu Check-In en la misma aplicación de Zubale." },
+    text: "Una vez estés en sala, recuerda siempre marcar tu Check-In en la misma aplicación de Zubale.", 
+    imageRow: 3},
   { icon: "award", label: "Capacitación", title: "Capacitación",
     text: "Acércate al mesón de soporte para recibir tu capacitación. Es importante que si tienes dudas de la capacitación misma, las realices con el capacitador para recibir orientación." },
   { icon: "rocket", label: "Empezar a ganar", title: "¡Empezar a ganar!",
@@ -4051,8 +4100,25 @@ function App() {
                   <FaqItem key={rol + "-" + i} q={f.q} a={f.a} />
                 ))}
               </div>
+              
             )}
 
+
+            {data.faqs && (
+              <div className="faqs-card fade-in stagger-2">
+                <div className="faqs-head">
+                  <div className="faqs-icon">?</div>
+                  <div>
+                    <div className="faqs-title">Problemas frecuentes al momento de registrarte</div>
+              
+                  </div>
+                </div>
+                {data.pfrec.map((f, i) => (
+                  <FaqItem key={rol + "-" + i} q={f.q} a={f.a} />
+                ))}
+              </div>
+              
+            )}
             {/* Video de capacitación — primer video de hoja "URL" del Sheet */}
             {sheetVideos.find(v => v.ytId) ? (() => {
               const vid = sheetVideos.find(v => v.ytId);
