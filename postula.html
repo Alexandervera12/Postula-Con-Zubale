@@ -1082,6 +1082,7 @@
       font-size: 13px;
       color: var(--muted);
       line-height: 1.6;
+      white-space: pre-line;
     }
 
     /* ── APP DOWNLOAD BANNER (compacto, al final) ── */
@@ -2572,16 +2573,15 @@ const ROLES = {
     key: "Zonas",
     emoji: "🚙",
     color: "#1557D6",
-    descripcion: "Un driver es quien retira un pedido ya listo en la tienda y lo lleva al domicilio del cliente. Puedes encontrar disponibilidad como driver en salas Jumbo, Santa Isabel, Lider, Tottus o  Unimarc",
+    descripcion: "Zonas es la nueva modalidad de Zubale! Donde puedes desempeñarte como driver pero no eliges sólo una tienda. Eliges una zona geográfica en la cual se pueden asignar pedidos de diferentes tiendas y marcas.Estas zonas geográficas las llamamos polígonos.",
     requisitos: [
-      "Vehículo",
+      "Vehículo (principalmente oportunidad para autos)",
       "Documentación del vehículo al día",
-      "Teléfono Android",
       "Ser mayor de edad",
       "Cédula de identidad al día",
       "Ser titular de una cuenta bancaria",
       "Iniciación de actividades en Servicios de Impuestos Internos (SII)",
-      "En caso de optar por salas Líder o Acuenta, se debe contar con cooler y 12 gelpacks. Se puede usar uno propio que sea genérico y sin marcas o se puede adquirir uno en sala.",
+      "En caso de que en el polígono elegido se encuentren incluidas salas de Líder o Acuenta, se debe contar con cooler y 12 gelpacks. Se puede usar uno propio que sea genérico y sin marcas o se puede adquirir uno en sala.",
     ],
     ganancias: [
       { label: "Por Hora",      value: "$5.000 ~ $7.000" },
@@ -2599,16 +2599,7 @@ const ROLES = {
           { label: "Mensual",                             value: "$967.500 ~ $1.354.000" },
         ],
       },
-      {
-        nombre: "Moto",
-        emoji: "🏍️",
-        ganancias: [
-          { label: "Por Hora",                            value: "$4.500 ~ $6.500" },
-          { label: "Por Día (aprox 9 hrs diarias)",       value: "$40.500 ~ $58.500" },
-          { label: "Semanalmente (considerando 5 días)",  value: "$202.500 ~ $292.500" },
-          { label: "Mensual",                             value: "$870.750 ~ $1.257.000" },
-        ],
-      },
+      
     ],
     tarifa: {
       title: "Tarifas – Zonas",
@@ -2621,15 +2612,16 @@ const ROLES = {
     },
     faqs: [
       { q: "¿Cómo y cuándo recibo mis pagos?",
-        a: "Los pagos son semanales. Todos los días martes o miércoles podrás ver tus ganancias en tu wallet de Zubale de los pedidos realizados del lunes al domingo de la semana anterior. Los días martes se acreditan las ganancias generadas en Jumbo, Santa Isabel, Unimarc y Tottus. Los días miércoles se acreditan las ganancias de las salas Lider y Acuenta ." },
+        a: "Antes de aceptar la órden, verás en tu app el monto que se pagará. Al finalizarlo, ya podrás verlo dentro de tu wallet." },
       { q: "¿Cómo retiro mis ganancias?",
         a: "Una vez que recibas tu primer pago, puedes retirar tus ganancias desde de la wallet. Al querer realizar el primer retiro, puedes ingresar los datos de tu cuenta bancaria en la cual quieres recibir el dinero. Es importante que la cuenta sea propia y que los datos ingresados sean del número de cuenta y no de tarjeta de débito." },
       { q: "¿Puedo elegir mis horarios y zonas de entrega?",
-        a: "Sí. Tú eliges los turnos y zonas que más te acomoden dentro de los cupos disponibles." },
+        a: "Sí. Tú eliges las citas y zonas que más te acomoden dentro de los cupos disponibles." },
       { q: "¿Que es el Bundle de Conectividad?",
         a: "El Bundle de conectividad es el monto minimo que puedes ganar en sala, cumpliendo con los requisitos." },
-      { q: "¿En qué salas puedo repartir como Driver con Moto?",
-        a: "Puedes tomar pedidos como driver con moto en las salas Jumbo Independencia, Jumbo La Florida y Jumbo Ñuñoa. También puedes tomar citas con moto en Zubale Zonas para el sector en Región Metropolitana de Santiago de La Florida o Providencia" },
+      { q: "¿Qué beneficios tiene Zubale Zonas?",
+        a: " - Todo sucede dentro de la app de Zubale: no necesitas contar con distintas aplicaciones.\n - Mejor productividad y aprovechamiento del tiempo y los kilómetros recorridos."},
+            
     ],
     videoYT: null,
   },
