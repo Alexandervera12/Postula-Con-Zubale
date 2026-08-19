@@ -1082,7 +1082,6 @@
       font-size: 13px;
       color: var(--muted);
       line-height: 1.6;
-      white-space: pre-line;
     }
 
     /* ── APP DOWNLOAD BANNER (compacto, al final) ── */
@@ -2434,10 +2433,22 @@ const ROLES = {
         a: "Sí. Como Picker eliges en qué turnos quieres trabajar según los cupos disponibles en la sala que elijas." },
       { q: "¿Que es el Bundle de Conectividad?",
         a: "El Bundle de conectividad es el monto minimo que puedes ganar en sala, cumpliendo con los requisitos." },
-      { q: "¿Qué es Edarkstore?",
-        a: "Edarkstore es una bodega de ecommerce en la cual puedes operar como picker. Estamos presentes en dos salas: Parque Arauco y Las Parcelas" },
     ],
-    videoYT: null, // ← Pega aquí el ID del video de YouTube para Picker (ej: "dQw4w9WgXcQ")
+    videoYT: null,
+    pfrec: [
+      { q: "Me indica que el rut ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que el teléfono ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que la patente ya existe",
+        a: "Se debe solicitar a soporte que deje registrada la patente correctamente" },
+      { q: "No puedo ingresar el código postal",
+        a: "Ya no se solicita el código postal.Puedes tener una versión antigua: prueba actualizando la app e intentando nuevamente." },
+      { q: "No me deja ingresar la fecha de vencimiento",
+        a: "La fecha de vencimiento debe ser una fecha futura, revisa no estar ingresando la fecha de nacimiento" },
+      { q: "¿Cómo contactar a soporte?",
+        a: "En caso de poder ingresar a la app, se debe abrir el chat dentro de la burbuja que se encuentra abajo a la derecha de la pantalla. En caso de no poder ingresar a la app, se debe acceder al soporte a través de la burbuja que se encuentra abajo a la derecha de la página web ([[www.zubalero.com/cl](https://www.zubalero.com/cl)](https://www.zubalero.com/cl](https://www.zubalero.com/cl)))" },
+    ],
   },
   Shopper: {
     key: "Shopper",
@@ -2504,7 +2515,21 @@ const ROLES = {
       { q: "¿En qué salas puedo ser Shopper con Moto?",
         a: "En todas las salas de Líder puedes tomar citas como Shopper con Moto" },
     ],
-    videoYT: null, // ← Pega aquí el ID del video de YouTube para Shopper
+    videoYT: null,
+    pfrec: [
+      { q: "Me indica que el rut ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que el teléfono ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que la patente ya existe",
+        a: "Se debe solicitar a soporte que deje registrada la patente correctamente" },
+      { q: "No puedo ingresar el código postal",
+        a: "Ya no se solicita el código postal.Puedes tener una versión antigua: prueba actualizando la app e intentando nuevamente." },
+      { q: "No me deja ingresar la fecha de vencimiento",
+        a: "La fecha de vencimiento debe ser una fecha futura, revisa no estar ingresando la fecha de nacimiento" },
+      { q: "¿Cómo contactar a soporte?",
+        a: "En caso de poder ingresar a la app, se debe abrir el chat dentro de la burbuja que se encuentra abajo a la derecha de la pantalla. En caso de no poder ingresar a la app, se debe acceder al soporte a través de la burbuja que se encuentra abajo a la derecha de la página web ([[www.zubalero.com/cl](https://www.zubalero.com/cl)](https://www.zubalero.com/cl](https://www.zubalero.com/cl)))" },
+    ],
   },
   Driver: {
     key: "Driver",
@@ -2569,21 +2594,36 @@ const ROLES = {
       { q: "¿En qué salas puedo repartir como Driver con Moto?",
         a: "Puedes tomar pedidos como driver con moto en las salas Jumbo Independencia, Jumbo La Florida y Jumbo Ñuñoa. También puedes tomar citas con moto en Zubale Zonas para el sector en Región Metropolitana de Santiago de La Florida o Providencia" },
     ],
-    videoYT: null, // ← Pega aquí el ID del video de YouTube para Driver
+    videoYT: null,
+    pfrec: [
+      { q: "Me indica que el rut ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que el teléfono ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que la patente ya existe",
+        a: "Se debe solicitar a soporte que deje registrada la patente correctamente" },
+      { q: "No puedo ingresar el código postal",
+        a: "Ya no se solicita el código postal.Puedes tener una versión antigua: prueba actualizando la app e intentando nuevamente." },
+      { q: "No me deja ingresar la fecha de vencimiento",
+        a: "La fecha de vencimiento debe ser una fecha futura, revisa no estar ingresando la fecha de nacimiento" },
+      { q: "¿Cómo contactar a soporte?",
+        a: "En caso de poder ingresar a la app, se debe abrir el chat dentro de la burbuja que se encuentra abajo a la derecha de la pantalla. En caso de no poder ingresar a la app, se debe acceder al soporte a través de la burbuja que se encuentra abajo a la derecha de la página web ([[www.zubalero.com/cl](https://www.zubalero.com/cl)](https://www.zubalero.com/cl](https://www.zubalero.com/cl)))" },
+    ],
   },
   Zonas: {
     key: "Zonas",
     emoji: "🚙",
     color: "#1557D6",
-    descripcion: "¡Zonas es la nueva modalidad de Zubale! Donde puedes desempeñarte como driver pero no eliges sólo una tienda. Eliges una zona geográfica en la cual se pueden asignar pedidos de diferentes tiendas y marcas. Estas zonas geográficas las llamamos polígonos.",
+    descripcion: "Un driver es quien retira un pedido ya listo en la tienda y lo lleva al domicilio del cliente. Puedes encontrar disponibilidad como driver en salas Jumbo, Santa Isabel, Lider, Tottus o  Unimarc",
     requisitos: [
-      "Vehículo (principalmente oportunidad para autos)",
-      "Documentación del vehículo al día (SOAP y permiso de circulación)",
+      "Vehículo",
+      "Documentación del vehículo al día",
+      "Teléfono Android",
       "Ser mayor de edad",
       "Cédula de identidad al día",
       "Ser titular de una cuenta bancaria",
       "Iniciación de actividades en Servicios de Impuestos Internos (SII)",
-      "En caso de que en el polígono elegido se encuentren incluidas salas de Líder o Acuenta, se debe contar con cooler y 12 gelpacks. Se puede usar uno propio que sea genérico y sin marcas o se puede adquirir uno en sala.",
+      "En caso de optar por salas Líder o Acuenta, se debe contar con cooler y 12 gelpacks. Se puede usar uno propio que sea genérico y sin marcas o se puede adquirir uno en sala.",
     ],
     ganancias: [
       { label: "Por Hora",      value: "$5.000 ~ $7.000" },
@@ -2601,7 +2641,16 @@ const ROLES = {
           { label: "Mensual",                             value: "$967.500 ~ $1.354.000" },
         ],
       },
-      
+      {
+        nombre: "Moto",
+        emoji: "🏍️",
+        ganancias: [
+          { label: "Por Hora",                            value: "$4.500 ~ $6.500" },
+          { label: "Por Día (aprox 9 hrs diarias)",       value: "$40.500 ~ $58.500" },
+          { label: "Semanalmente (considerando 5 días)",  value: "$202.500 ~ $292.500" },
+          { label: "Mensual",                             value: "$870.750 ~ $1.257.000" },
+        ],
+      },
     ],
     tarifa: {
       title: "Tarifas – Zonas",
@@ -2614,18 +2663,31 @@ const ROLES = {
     },
     faqs: [
       { q: "¿Cómo y cuándo recibo mis pagos?",
-        a: "Antes de aceptar la órden, verás en tu app el monto que se pagará. Al finalizarlo, ya podrás verlo dentro de tu wallet." },
+        a: "Los pagos son semanales. Todos los días martes o miércoles podrás ver tus ganancias en tu wallet de Zubale de los pedidos realizados del lunes al domingo de la semana anterior. Los días martes se acreditan las ganancias generadas en Jumbo, Santa Isabel, Unimarc y Tottus. Los días miércoles se acreditan las ganancias de las salas Lider y Acuenta ." },
       { q: "¿Cómo retiro mis ganancias?",
         a: "Una vez que recibas tu primer pago, puedes retirar tus ganancias desde de la wallet. Al querer realizar el primer retiro, puedes ingresar los datos de tu cuenta bancaria en la cual quieres recibir el dinero. Es importante que la cuenta sea propia y que los datos ingresados sean del número de cuenta y no de tarjeta de débito." },
       { q: "¿Puedo elegir mis horarios y zonas de entrega?",
-        a: "Sí. Tú eliges las citas y zonas que más te acomoden dentro de los cupos disponibles. Sólo debes agendar tu cita en la app y realizar checkin al ingresar dentro del polígono (puedes hacer checkin hasta 15 minutos antes del inicio de la cita agendada). Una vez conectado ya puedes recibir notificaciones de pedidos. " },
+        a: "Sí. Tú eliges los turnos y zonas que más te acomoden dentro de los cupos disponibles." },
       { q: "¿Que es el Bundle de Conectividad?",
         a: "El Bundle de conectividad es el monto minimo que puedes ganar en sala, cumpliendo con los requisitos." },
-      { q: "¿Qué beneficios tiene Zubale Zonas?",
-        a: " - Todo sucede dentro de la app de Zubale: no necesitas contar con distintas aplicaciones.\n - Mejor productividad y aprovechamiento del tiempo y los kilómetros recorridos.\n - Recibes el pago de tus órdenes de manera inmediata.\n - Conoces el monto exacto que se pagará en cada órden. \n - Varias salas de diferentes clientes pueden componer el mismo polígono."},
-            
+      { q: "¿En qué salas puedo repartir como Driver con Moto?",
+        a: "Puedes tomar pedidos como driver con moto en las salas Jumbo Independencia, Jumbo La Florida y Jumbo Ñuñoa. También puedes tomar citas con moto en Zubale Zonas para el sector en Región Metropolitana de Santiago de La Florida o Providencia" },
     ],
     videoYT: null,
+    pfrec: [
+      { q: "Me indica que el rut ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que el teléfono ya existe",
+        a: "Prueba ingresando con la cuenta creada anteriormente. En caso de no poder continuar, contactar a soporte" },
+      { q: "Me indica que la patente ya existe",
+        a: "Se debe solicitar a soporte que deje registrada la patente correctamente" },
+      { q: "No puedo ingresar el código postal",
+        a: "Ya no se solicita el código postal.Puedes tener una versión antigua: prueba actualizando la app e intentando nuevamente." },
+      { q: "No me deja ingresar la fecha de vencimiento",
+        a: "La fecha de vencimiento debe ser una fecha futura, revisa no estar ingresando la fecha de nacimiento" },
+      { q: "¿Cómo contactar a soporte?",
+        a: "En caso de poder ingresar a la app, se debe abrir el chat dentro de la burbuja que se encuentra abajo a la derecha de la pantalla. En caso de no poder ingresar a la app, se debe acceder al soporte a través de la burbuja que se encuentra abajo a la derecha de la página web ([[www.zubalero.com/cl](https://www.zubalero.com/cl)](https://www.zubalero.com/cl](https://www.zubalero.com/cl)))" },
+    ],
   },
 };
 
@@ -3990,6 +4052,20 @@ function App() {
                 </div>
                 {data.faqs.map((f, i) => (
                   <FaqItem key={rol + "-" + i} q={f.q} a={f.a} />
+                ))}
+              </div>
+            )}
+
+            {data.pfrec && (
+              <div className="faqs-card fade-in stagger-2">
+                <div className="faqs-head">
+                  <div className="faqs-icon">?</div>
+                  <div>
+                    <div className="faqs-title">Problemas frecuentes al momento de registrarte</div>
+                  </div>
+                </div>
+                {data.pfrec.map((f, i) => (
+                  <FaqItem key={rol + "-pfrec-" + i} q={f.q} a={f.a} />
                 ))}
               </div>
             )}
